@@ -1,0 +1,42 @@
+﻿using AzRanger.Models;
+using AzRanger.Models.AzMgmt;
+
+namespace AzRanger.Checks.Rules
+{
+    internal class AzKeyVLogging : BaseCheck
+    {
+        public override CheckResult Audit(Tenant tenant)
+        {
+            bool passed = true;
+
+            foreach (Subscription sub in tenant.Subscriptions.Values)
+            {
+                foreach (KeyVault vault in sub.Resources.KeyVaults)
+                {
+                    bool passedSettings = false;
+                    foreach (DiagnosticSettings diagnosticSettings in vault.DiagnosticSettings)
+                    {
+                        foreach (DiagnosticSettingsLog log in diagnosticSettings.properties.logs)
+                        {
+                            if (log.category == "AuditEvent" && log.retentionPolicy.enabled && log.retentionPolicy.days < 0)
+                            {
+                                passedSettings = true;
+                            }
+                        }
+                    }
+                    if (passedSettings == false)
+                    {
+                        passed = false;
+                        this.AddAffectedEntity(vault);
+                    }
+                }
+            }
+
+            if (passed)
+            {
+                return CheckResult.NoFinding;
+            }
+            return CheckResult.Finding;
+        }
+    }
+}

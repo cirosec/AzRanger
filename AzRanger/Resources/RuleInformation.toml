@@ -1,0 +1,2539 @@
+﻿[ActivityBasedTimeoutPolicyCheck]
+score = 4
+short = "Idle session timeout is too long (3 hour or longer)"
+risk = "This increases the risk that a logged on user is compromised on a non company device."
+solution = """
+1. Go to Entra Admin Center
+2. Go to Protection
+3. Go to Conditional Access
+4. Create a new policy
+5. Set *Users* to *All users*
+6. Set *Cloud apps* to *Office 365*
+7. Set as *Condition* the *Client Apps* to *Browser*
+8. Set *Session* to *Use app enforced restrictions*
+"""
+scope = "AAD"
+maturity = 0
+portal = "https://entra.microsoft.com/#view/Microsoft_AAD_ConditionalAccess/ConditionalAccessBlade/~/Policies/menuId/Policies/fromNav/"
+
+[ADPasswordHashSyncEnabled]
+score = 3
+risk = "If password hash sync is not enabled, there is a risk that the leak of user credentials remains unnoticed."
+short = "Password hash sync is not enabled"
+solution = "You have to enable Password hash sync on the server where you have installed your Azure AD Connect tool. During the setup under *Optional Features* *Password hash synchronization* can be enabled."
+scope = "AAD"
+maturity = 1
+portal = "https://entra.microsoft.com/#view/Microsoft_AAD_IAM/DirectoriesADConnectBlade"
+CISM365Section = "5.1.8.1"
+CISM365Level = "L1"
+CISM365version = "6.0"
+
+[ADPasswordProtection]
+score = 3
+short = "Entra ID Password Protection is not enabled"
+risk = "Entra ID Password Protection protects user using weak or leaked passwords."
+solution = "To enable Entra ID Directory Password protection go to [https://entra.microsoft.com/#view/Microsoft_AAD_IAM/AuthenticationMethodsMenuBlade/~/PasswordProtection](https://entra.microsoft.com/#view/Microsoft_AAD_IAM/AuthenticationMethodsMenuBlade/~/PasswordProtection) and enable *Enable password protection on Windows Server Active Directory*."
+scope = "AAD"
+maturity = 1
+portal = "https://entra.microsoft.com/#view/Microsoft_AAD_IAM/AuthenticationMethodsMenuBlade/~/PasswordProtection"
+CISM365Section = "5.2.3.3"
+CISM365Level = "L1"
+CISM365version = "6.0"
+
+[AppsAsGlobalAdmin]
+score = 9
+maturity = 1
+short = "Service principals which are member of the Roles \"Global Admin\" or \"Privileged Authentication Administrator\""
+risk = "A user with *owner* rights to the service principal or with the role *Application administrator* or *Cloud application administrator* can use this configuration to elevate its privileges."
+link = "https://posts.specterops.io/azure-privilege-escalation-via-service-principal-abuse-210ae2be2a5"
+solution = "Remove the service principals from these roles."
+scope = "AAD"
+
+[AppsDangerousPerms]
+score = 9
+short = "Some service principals have dangerous permissions"
+risk = "A user with *owner* rights to the service principal or with the role *Application administrator* or *Cloud application administrator* can use its role to elevate its privileges."
+link = "https://posts.specterops.io/azure-privilege-escalation-via-azure-api-permissions-abuse-74aee1006f48"
+long = "In your tenant exists Service principals with dangerous permissions like: *RoleManagement.ReadWrite.Directory* or *AppRoleAssignment.ReadWrite.All*"
+solution = "Check if these permissions are really needed by the application."
+scope = "AAD"
+maturity = 1
+portal = "https://entra.microsoft.com/#view/Microsoft_AAD_RegisteredApps/ApplicationsListBlade/quickStartType~/null/sourceType/Microsoft_AAD_IAM"
+
+[AppsUserCanAddCredsHighPrivApp]
+short = "Low privileged user can add credentials to apps with high privileged roles"
+risk = "This could lead privileges escalation within your tenant, please check *Roles and administrators -> Preview*."
+score = 9
+link = "https://posts.specterops.io/azure-privilege-escalation-via-azure-api-permissions-abuse-74aee1006f48"
+long = "Users with low privileges can add credentials to apps with high privileges."
+solution = """
+1. Check if the high privileges are required by the app
+2. Check if you can remove the rights from the user to add credentials
+"""
+scope = "AAD"
+maturity = 1
+portal = "https://entra.microsoft.com/#view/Microsoft_AAD_RegisteredApps/ApplicationsListBlade/quickStartType~/null/sourceType/Microsoft_AAD_IAM"
+
+[AppsUserCanAddCredsHighPrivService]
+short = "Low priv user can add credentials to service principals with high privileged roles"
+risk = "This could lead privileges escalation within your tenant, please check *Roles and administrators -> Preview*."
+score = 9
+link = "https://posts.specterops.io/azure-privilege-escalation-via-azure-api-permissions-abuse-74aee1006f48"
+long = "Users with low privileges can add credentials to service principals with high privileges."
+solution = """
+1. Check if the high privileges are required by the service principal
+2. Check if you can remove the rights from the user to add credentials.
+"""
+scope = "AAD"
+maturity = 1
+portal = "https://entra.microsoft.com/#view/Microsoft_AAD_IAM/StartboardApplicationsMenuBlade/~/AppAppsPreview"
+
+[AppsWithCreds]
+short = "Apps with credentials"
+risk = "If an app has higher privileges than the user created the credentials, then this can lead to privilege escalation. Additional this could be abused as backdoor."
+score = 3
+link = "https://posts.specterops.io/azure-privilege-escalation-via-service-principal-abuse-210ae2be2a5"
+long = "If an apps contain credentials, a user who knows this credenitals is able to authenticate as this app"
+solution = "Check and remove the credentials from the app if they are not needed by any application"
+scope = "AAD"
+maturity = 1
+portal = "https://entra.microsoft.com/#view/Microsoft_AAD_RegisteredApps/ApplicationsListBlade/quickStartType~/null/sourceType/Microsoft_AAD_IAM"
+
+[AppsWithHighPrives]
+score = 9
+short = "Service principals with high privileged roles assigned"
+risk = "A user with *owner* rights to the service principal or with the role *Application administrator* or *Cloud application administrator* can use this configuration to elevate its privileges."
+solution = "Check if the service principals needs these roles or if they can be removed."
+scope = "AAD"
+maturity = 1
+portal = "https://entra.microsoft.com/#view/Microsoft_AAD_RegisteredApps/ApplicationsListBlade/quickStartType~/null/sourceType/Microsoft_AAD_IAM"
+
+[AppsWithNonExistentRedirectUrl]
+score = 8
+short = "Apps with a non-existent redirect urls exist"
+risk = "This eases phishing attacks, as an attacker only needs to register the url and convince the victims to enter his malicious URL. The already registered (and maybe by admin approved app) can then be used, so that the victims will authenticate themself against EntraId and send the access code to the malicious app."
+solution = "If you don't need the app anymore delete it. Otherwise configure the RedirectUrl to a proper value."
+scope = "AAD"
+maturity = 1
+
+[AzActLogAlertChangeNetworkSecGrp]
+score = 0
+short = "No Activity Log Alert for *Create or Update Network Security Group*"
+risk = "Unwanted changes for Network Security Groups can go unnoticed."
+scope = "Azure"
+maturity = 1
+portal = "https://portal.azure.com/#blade/Microsoft_Azure_Monitoring/AzureMonitoringBrowseBlade/alertsV2"
+service = "StorageAccount"
+CISAZSection = "6.2.3"
+CISAZLevel = "L1"
+CISAZVersion = "3.0"
+
+[AzActLogAlertChangeSQLServerFWRule]
+score = 0
+short = "No Activity Log Alert for \"Create or Update or Delete SQL Server Firewall Rule\""
+risk = "Unwanted changes for *Create or Update or Delete SQL Server Firewall Rule* can go unnoticed."
+scope = "Azure"
+maturity = 1
+portal = "https://portal.azure.com/#blade/Microsoft_Azure_Monitoring/AzureMonitoringBrowseBlade/alertsV2"
+service = "StorageAccount"
+CISAZSection = "6.2.7"
+CISAZLevel = "L1"
+CISAZVersion = "3.0"
+
+[AzActLogAlertCreateOrUpdatePublicIPAddressRule]
+score = 0
+short = "No Activity Log Alert for *Create or Update Public IP Address rule*"
+risk = "Unwanted changes for Public IP Address Rules can go unnoticed."
+scope = "Azure"
+maturity = 0
+portal = "https://portal.azure.com/#blade/Microsoft_Azure_Monitoring/AzureMonitoringBrowseBlade/alertsV2"
+service = "StorageAccount"
+CISAZSection = "6.2.9"
+CISAZLevel = "L1"
+CISAZVersion = "3.0"
+
+[AzActLogAlertCreateOrUpdateSecuritySolution]
+score = 0
+short = "No Activity Log Alert for \"Create or Update Security Solutions\""
+risk = "Unwanted changes for in the Security Solution might stay unnoticed."
+scope = "Azure"
+maturity = 0
+portal = "https://portal.azure.com/#blade/Microsoft_Azure_Monitoring/AzureMonitoringBrowseBlade/alertsV2"
+service = "StorageAccount"
+CISAZSection = "6.2.5"
+CISAZLevel = "L1"
+CISAZVersion = "3.0"
+
+[AzActLogAlertCreatePolicyAssignment]
+score = 0
+short = "No Activity Log Alert for \"Create Policy Assignment\""
+risk = "Unwanted changes for Create Policy Assignment can go unnoticed."
+scope = "Azure"
+maturity = 0
+portal = "https://portal.azure.com/#blade/Microsoft_Azure_Monitoring/AzureMonitoringBrowseBlade/alertsV2"
+service = "StorageAccount"
+CISAZSection = "6.2.1"
+CISAZLevel = "L1"
+CISAZVersion = "3.0"
+
+[AzActLogAlertDeleteNetworkSecGrp]
+score = 0
+short = "No Activity Log Alert for \"Deleting a Network Security Group\""
+risk = "Unwanted changes for Deleting a Network Security Group can go unnoticed."
+scope = "Azure"
+maturity = 1
+portal = "https://portal.azure.com/#blade/Microsoft_Azure_Monitoring/AzureMonitoringBrowseBlade/alertsV2"
+service = "StorageAccount"
+CISAZSection = "6.2.4"
+CISAZLevel = "L1"
+CISAZVersion = "3.0"
+
+[AzActLogAlertDeletePolicyAssignment]
+score = 0
+short = "No Activity Log Alert for \"Delete Policy Assignment\""
+risk = "Unwanted changes for Deleting Policy Assignment can go unnoticed."
+scope = "Azure"
+maturity = 0
+portal = "https://portal.azure.com/#blade/Microsoft_Azure_Monitoring/AzureMonitoringBrowseBlade/alertsV2"
+service = "StorageAccount"
+CISAZSection = "6.2.2"
+CISAZLevel = "L1"
+CISAZVersion = "3.0"
+
+[AzActLogAlertDeletePublicIPAddressRule]
+score = 0
+short = "No Activity Log Alert for *Delete Public IP Address rule*"
+risk = "Unwanted deletion of Public IP Address Rules can go unnoticed."
+scope = "Azure"
+maturity = 0
+portal = "https://portal.azure.com/#blade/Microsoft_Azure_Monitoring/AzureMonitoringBrowseBlade/alertsV2"
+service = "StorageAccount"
+CISAZSection = "6.2.9"
+CISAZLevel = "L1"
+CISAZVersion = "3.0"
+
+[AzActLogAlertDeleteSecuritySolution]
+score = 0
+short = "No Activity Log Alert for \"Deleting Security Solution\""
+risk = "Unwanted changes for Deleting Security Solution can go unnoticed."
+scope = "Azure"
+maturity = 1
+portal = "https://portal.azure.com/#blade/Microsoft_Azure_Monitoring/AzureMonitoringBrowseBlade/alertsV2"
+service = "StorageAccount"
+CISAZSection = "6.2.6"
+CISAZLevel = "L1"
+CISAZVersion = "3.0"
+
+[AzActLogAlertDeleteSQLFirewallRule]
+score = 0
+short = "No Activity Log Alert for \"Delete SQL Server Firewall Rule\""
+risk = "Unwanted changes for Delete SQL Server Firewall Rule can go unnoticed."
+scope = "Azure"
+maturity = 1
+portal = "https://portal.azure.com/#blade/Microsoft_Azure_Monitoring/AzureMonitoringBrowseBlade/alertsV2"
+service = "StorageAccount"
+
+[AzActNSGRDPLimitation]
+score = 0
+short = "Network Security Group allows unrestricted RDP access"
+risk = "This increases the risk, that the service is exploited by a threat actor."
+solution = "Configure the Network Security Group that at least access to the servie is IP restricted."
+scope = "Azure"
+maturity = 1
+portal = "https://portal.azure.com/#blade/HubsExtension/BrowseResource/resourceType/Microsoft.Network%2FNetworkSecurityGroups"
+service = "NetworkSecurityGroup"
+
+[AzActNSGSSHLimitation]
+score = 0
+short = "Network Security Group allows unrestricted SSH access"
+risk = "This increases the risk, that the service is exploited by a threat actor."
+solution = "Configure the Network Security Group that at least access to the servie is IP restricted."
+scope = "Azure"
+maturity = 1
+portal = "https://portal.azure.com/#blade/HubsExtension/BrowseResource/resourceType/Microsoft.Network%2FNetworkSecurityGroups"
+service = "NetworkSecurityGroup"
+
+[AzActNSGSUnrestrictedDestinationPort]
+score = 0
+short = "Network Security Group without inbound port restriction"
+risk = "The service protected by the Network Security Group is exposed to the internet."
+solution = "Configure the Network Security Group that only needed inbound ports are allowed."
+scope = "Azure"
+maturity = 1
+portal = "https://portal.azure.com/#blade/HubsExtension/BrowseResource/resourceType/Microsoft.Network%2FNetworkSecurityGroups"
+service = "NetworkSecurityGroup"
+
+[AzActNSGSUnrestrictedSourceAccess]
+score = 0
+short = "Network Security Group allows access from everywhere"
+risk = "The service protected by the Network Security Group is exposed to the internet."
+solution = "Check if the source address can be restricted."
+scope = "Azure"
+maturity = 1
+portal = "https://portal.azure.com/#blade/HubsExtension/BrowseResource/resourceType/Microsoft.Network%2FNetworkSecurityGroups"
+service = "NetworkSecurityGroup"
+
+[AzAppRegistration]
+score = 9
+short = "Users are allowed to register own applications"
+risk = "Allowing users to register their own applications allows an attacker to persist access or to register an internal malicious applications."
+link = "https://www.cloud-architekt.net/detection-and-mitigation-consent-grant-attacks-azuread/"
+solution = "Go to [https://portal.azure.com/#blade/Microsoft_AAD_IAM/UsersManagementMenuBlade/UserSettings](https://portal.azure.com/#blade/Microsoft_AAD_IAM/UsersManagementMenuBlade/UserSettings) and switch the button *Users can register applications* to *No*."
+scope = "AAD"
+maturity = 1
+portal = "https://entra.microsoft.com/#view/Microsoft_AAD_UsersAndTenants/UserManagementMenuBlade/~/UserSettings/menuId/UserSettings"
+CISM365Section = "5.1.2.2"
+CISM365Level = "L1"
+CISM365version = "6.0"
+CISAZSection = "2.12"
+CISAZLevel = "L1"
+CISAZVersion = "3.0"
+
+[AzASCDefaultPolicy]
+score = 2
+short = "The Default Azure Policy is disabled"
+risk = "Having the Security Default Policy enabled could increase the security of a subscription."
+long = "The Default Azure Policy when enabled builds a security baseline for each subscription"
+solution = """
+1. Go to Azure Policy
+2. On Policy Overview blade, Click on Policy ASC Default (Subscription: Subscription_ID)
+3. On ASC Default blade, Click on Edit Assignments
+4. In section Basics, drop down to Policy Enforcements setting and check if it is set to Enabled
+"""
+scope = "Azure"
+maturity = 1
+portal = "https://portal.azure.com/?l=en.en-us#view/Microsoft_Azure_Policy/PolicyMenuBlade/~/Overview"
+
+[AzAutoprovisioning]
+score = 2
+short = "LogAnalytics Agent is not automatically deployed on VMs"
+risk = "If no logAnalytics Agent is deployed on a VM a lot of security related events can go unnoticed."
+scope = "Azure"
+maturity = 1
+portal = "https://portal.azure.com/#view/Microsoft_Azure_Security/SecurityMenuBlade/~/EnvironmentSettings"
+
+[AzB2BCollaborationDomainRestriction]
+score = 4
+short = "Collaboration invitations are not restricted to allowed domains"
+risk = "Internal users can invite external users from any domain including personal accounts, granting them access to resources without explicit company identification."
+long = "This setting works independently from OneDrive and SharePoint allow/block lists. Users can still share via Anyone links in SharePoint/OneDrive if not disabled."
+solution = "Navigate to Microsoft Entra admin center > External Identities > External collaboration settings. Under Collaboration restrictions select *Allow invitations only to the specified domains (most restrictive)* and specify allowed domains."
+scope = "AAD"
+maturity = 1
+portal = "https://entra.microsoft.com/#view/Microsoft_AAD_IAM/AllowlistPolicyBlade"
+CISM365Section = "5.1.6.2"
+CISM365Level = "L2"
+CISM365version = "6.0"
+
+[AzB2BPolicy]
+score = 5
+short = "Guest users are not restricted to specific domains"
+risk = "Guest users can be invited from all tenants. This could lead to an unwanted data loss."
+solution = "Go to the Portal URL and check *Allow invitations only to the specified domains (most restrictive)*."
+scope = "AAD"
+maturity = 1
+portal = "https://entra.microsoft.com/#view/Microsoft_AAD_IAM/AllowlistPolicyBlade"
+CISM365Section = "5.1.6.1"
+CISM365Level = "L2"
+CISM365version = "6.0"
+
+[AzGuestInvite]
+score = 2
+short = "Guest Invitation is not restricted"
+risk = "This may lead to an unwanted number of guests in the tenant."
+long = "Either everyone (including guests) or all active members of the tenant can invite guests."
+solution = "Go to *External Identities | External collaboration settings* and set the *Guest invite restrictions* to *Only users assigned to specific admin roles can invite guest users* or *No one in the organization can invite guest users including admins (most restrictive)"
+scope = "AAD"
+maturity = 1
+portal = "https://entra.microsoft.com/#view/Microsoft_AAD_IAM/AllowlistPolicyBlade"
+CISM365Section = "5.1.6.3"
+CISM365Level = "L2"
+CISM365version = "6.0"
+
+[AzGuestRestrictions]
+score = 2
+short = "Guests are not maximally restricted"
+risk = "Currently guests can enumerate the whole tenant."
+link = "https://danielchronlund.com/2021/11/18/scary-azure-ad-tenant-enumeration-using-regular-b2b-guest-accounts/"
+solution = "Go to *External Identities -> External collaboration settings* and set *Guest user access restrictions* to *Guest user access is restricted to properties and memberships of their own directory objects (most restrictive)."
+scope = "AAD"
+maturity = 1
+portal = "https://entra.microsoft.com/#view/Microsoft_AAD_IAM/AllowlistPolicyBlade"
+CISM365Section = "5.1.6.2"
+CISM365Level = "L1"
+CISM365version = "6.0"
+CISAZSection = "2.15"
+CISAZLevel = "L1"
+CISAZVersion = "3.0"
+
+[AzKeyVKeyExpiration]
+score = 1
+short = "KeyVaultt key will never expire"
+risk = "If the key is lost or stolen, the attacker can use the key as long as someone changes it. What can be a very long time."
+solution = "You can set the expiration date either manually in the Portal (Portal Link) for each Key Vault or you can use the following code: `az keyvault key set-attributes --name <keyName> --vault-name <vaultName> --expires Y-m-dTH:M:SZ`"
+scope = "Azure"
+maturity = 1
+portal = "https://portal.azure.com/#blade/HubsExtension/BrowseResource/resourceType/Microsoft.KeyVaultt%2Fvaults"
+service = "KeyVaultt"
+
+[AzKeyVKeyExpirationNonRBAC]
+scope = "Azure"
+maturity = 1
+score = 1
+portal = "https://portal.azure.com/#blade/HubsExtension/BrowseResource/resourceType/Microsoft.KeyVaultt%2Fvaults"
+service = "KeyVaultt"
+CISAZSection = "3.3.2"
+CISAZLevel = "L1"
+CISAZVersion = "3.0"
+
+[AzKeyVKeyExpirationRBAC]
+scope = "Azure"
+maturity = 1
+score = 1
+portal = "https://portal.azure.com/#blade/HubsExtension/BrowseResource/resourceType/Microsoft.KeyVaultt%2Fvaults"
+service = "KeyVaultt"
+CISAZSection = "3.3.1"
+CISAZLevel = "L1"
+CISAZVersion = "3.0"
+
+[AzKeyVLogging]
+score = 1
+short = "Key Vault without active logging"
+risk = "Without active logging and monitoring, incidence or unauthorized access to the Key Vault can go unnoticed."
+scope = "Azure"
+maturity = 1
+portal = "https://portal.azure.com/#blade/HubsExtension/BrowseResource/resourceType/Microsoft.KeyVaultt%2Fvaults"
+service = "KeyVaultt"
+
+[AzKeyVSecretExpiration]
+score = 1
+short = "Key Vault secret will never expire"
+risk = "If the secret is lost or stolen, the attacker can use the secret as long as someone changes it. What can be a very long time."
+scope = "Azure"
+maturity = 1
+portal = "https://portal.azure.com/#blade/HubsExtension/BrowseResource/resourceType/Microsoft.KeyVaultt%2Fvaults"
+service = "KeyVaultt"
+
+[AzKeyVSecretExpirationNonRBAC]
+scope = "Azure"
+maturity = 1
+score = 1
+portal = "https://portal.azure.com/#blade/HubsExtension/BrowseResource/resourceType/Microsoft.KeyVaultt%2Fvaults"
+service = "KeyVaultt"
+CISAZSection = "3.3.4"
+CISAZLevel = "L1"
+CISAZVersion = "3.0"
+
+[AzKeyVSecretExpirationRBAC]
+scope = "Azure"
+maturity = 1
+score = 1
+portal = "https://portal.azure.com/#blade/HubsExtension/BrowseResource/resourceType/Microsoft.KeyVaultt%2Fvaults"
+service = "KeyVaultt"
+CISAZSection = "3.3.3"
+CISAZLevel = "L1"
+CISAZVersion = "3.0"
+
+[AzKeyVSoftDelete]
+score = 1
+short = "Key Vault without purge protection"
+risk = "In case a user inadvertently deletes a Azure KeyVaultt Key, it is not possible to recover it."
+solution = "Go to each Azure KeyVault and ensure that *Soft delete has been enabled on this key vault* is checked."
+scope = "Azure"
+maturity = 1
+portal = "https://portal.azure.com/#blade/HubsExtension/BrowseResource/resourceType/Microsoft.KeyVaultt%2Fvaults"
+service = "KeyVaultt"
+
+[AzMgmtGroupCreation]
+score = 2
+short = "Everyone can create Management Groups"
+risk = "This may lead to an unwanted number of Management Groups in the tenant."
+solution = "Go to [https://portal.azure.com/#view/Microsoft_Azure_ManagementGroups/ManagementGroupBrowseBlade/~/MGBrowse_settingsItem](https://portal.azure.com/#view/Microsoft_Azure_ManagementGroups/ManagementGroupBrowseBlade/~/MGBrowse_settingsItem) and toggle *Require write permissions for creating new management groups.* to *Off.*"
+scope = "AAD"
+maturity = 1
+portal = "https://portal.azure.com/#blade/Microsoft_Azure_ManagementGroups/ManagementGroupBrowseBlade/MGBrowse_settingsItem"
+
+[AzPSQLLogCheckpoints]
+score = 1
+short = "Log Checkpoints are disabled"
+risk = "You might miss problems and errors in PostgreSQL queries."
+solution = "For each PSQLServer go to *Settings -> Server parameters* and search for *log_checkpoints*. Set the value to *On*."
+scope = "Azure"
+maturity = 1
+portal = "https://portal.azure.com/#view/HubsExtension/BrowseResource/resourceType/Microsoft.DBforPostgreSQL%2Fservers"
+service = "PSQLServer"
+CISAZSection = "5.2.2"
+CISAZLevel = "L1"
+CISAZVersion = "3.0"
+
+[AzPSQLLogConnections]
+score = 1
+short = "Log Connection are disabled"
+risk = "You might miss problems and errors in PostgreSQL queries."
+solution = "For each PSQLServer go to *Settings -> Server* parameters and search for *log_connections*. Set the value to *On*."
+scope = "Azure"
+maturity = 1
+portal = "https://portal.azure.com/#view/HubsExtension/BrowseResource/resourceType/Microsoft.DBforPostgreSQL%2Fservers"
+service = "PSQLServer"
+CISAZSection = "5.2.6"
+CISAZLevel = "L1"
+CISAZVersion = "3.0"
+
+[AzPSQLLogConnectionThrottling]
+score = 1
+short = "Log Disconnection are disabled"
+risk = "You might miss problems and errors in PostgreSQL queries."
+solution = "For each PSQLServer go to *Settings -> Server* parameters and search for *connection_throttling*. Set the value to *On*."
+scope = "Azure"
+maturity = 1
+portal = "https://portal.azure.com/#view/HubsExtension/BrowseResource/resourceType/Microsoft.DBforPostgreSQL%2Fservers"
+service = "PSQLServer"
+CISAZSection = "5.2.3"
+CISAZLevel = "L1"
+CISAZVersion = "3.0"
+
+[AzPSQLLogDisconnections]
+score = 1
+short = "Log Disconnection are disabled"
+risk = "You might miss problems and errors in PostgreSQL queries."
+solution = "For each PSQLServer go to *Settings -> Server* parameters and search for *log_disconnections*. Set the value to *On*."
+scope = "Azure"
+maturity = 1
+portal = "https://portal.azure.com/#view/HubsExtension/BrowseResource/resourceType/Microsoft.DBforPostgreSQL%2Fservers"
+service = "PSQLServer"
+CISAZSection = "5.2.7"
+CISAZLevel = "L1"
+CISAZVersion = "3.0"
+
+[AzRestrictUserAccessGroupFeature]
+score = 2
+short = "User can do self-service group management"
+risk = "In the current configuration users can perform self-service for their groups. This can result in an unwanted configuration."
+solution = "Go to the link in the reference and ensure that *Restrict user ability to access groups features in My Groups.* is set to *Yes*. "
+scope = "AAD"
+maturity = 1
+portal = "https://entra.microsoft.com/#view/Microsoft_AAD_IAM/GroupsManagementMenuBlade/~/General/menuId/General"
+
+[AzSecurityContacts]
+score = 2
+short = "subscription without security contact"
+risk = "In case of an incident, this could increase the time span to identify the legitimate owner or responsible person for a subscription."
+scope = "Azure"
+maturity = 1
+portal = "https://portal.azure.com/?l=en.en-us#view/Microsoft_Azure_Policy/PolicyMenuBlade/~/Overview"
+
+[AzSecurityContactsNotifiedForHigh]
+score = 2
+short = "The owner is not notified in case of a \"High\" security alert"
+risk = "This can increase the time when an incident could be handled."
+scope = "Azure"
+maturity = 1
+portal = "https://portal.azure.com/?l=en.en-us#view/Microsoft_Azure_Policy/PolicyMenuBlade/~/Overview"
+
+[AzSecurityContactsNotifyOwner]
+score = 2
+short = "The Owner of a subscription does not get security alerts via email"
+risk = "This can increase the time when an incident could be handled."
+scope = "Azure"
+maturity = 1
+portal = "https://portal.azure.com/?l=en.en-us#view/Microsoft_Azure_Policy/PolicyMenuBlade/~/Overview"
+
+[AzSecurityDefaultsO365]
+score = 0
+short = "Security Defaults should be disabled."
+risk = "Security Defaults prevents you from using more advanced security features."
+solution = "Disable Security Defaults and use more advance security features."
+scope = "AAD"
+maturity = 1
+portal = "https://entra.microsoft.com/#view/Microsoft_AAD_IAM/TenantOverview.ReactView"
+
+[AzSQLAuditingEnabled]
+score = 1
+short = "No SQLServer Auditing is enabled"
+risk = "Irregular Database activities, anomalies and security violations might stay unnoticed."
+solution = "In the Azure Portal go to *SQL Servers* and click on *Auditing* for each instance."
+scope = "Azure"
+maturity = 1
+portal = "https://portal.azure.com/#blade/HubsExtension/BrowseResource/resourceType/Microsoft.Sql%2Fservers"
+service = "SQLServer"
+CISAZSection = "5.1.1"
+CISAZLevel = "L1"
+CISAZVersion = "3.0"
+
+[AzSQLAuditingRetention]
+score = 1
+short = "SQL Server Auditretention is smaller than 90 days"
+risk = "In case of an incident audit logs might help to investigate it. If the retention time is too short some data might be missing."
+solution = "In the Azure Portal go to *SQL Servers* and click on *Auditing* on the left menu under *Security* for each instance. Under *Storage* expand *Advanced properties* and set *Retention (days)* to higher than 90 or to 0 for unlimited retention."
+scope = "Azure"
+maturity = 1
+portal = "https://portal.azure.com/#blade/HubsExtension/BrowseResource/resourceType/Microsoft.Sql%2Fservers"
+service = "SQLServer"
+
+[AzSQLDatabaseAuditRetention]
+score = 5
+short = "SQL Database audit retention is shorter than 90 days"
+risk = "In case of an incident you might lose important information"
+solution = """
+1. Go to the Azure Portal
+2. Go to SQL databases
+3. For each database, under Security, click Auditing
+4. If Storage is enabled, click on Advanced Properties
+5. Set Retention (days) to a value greater than 90, or 0 for unlimited retention.
+6. Save
+"""
+scope = "AAD"
+maturity = 1
+portal = "https://portal.azure.com/#browse/Microsoft.Sql%2Fservers%2Fdatabases"
+CISAZSection = "5.1.6"
+CISAZLevel = "L1"
+CISAZVersion = "3.0"
+
+[AzSQLDatabaseEncryption]
+score = 5
+short = "SQL Database is not encrypted"
+risk = "This might violate certain compliant policy in your organisation."
+solution = """
+1. Go to the Azure Portal
+2. Go to SQL databases
+3. For each database, under Security, click Data Encryption
+4. Under Transparent data encryption, set Data encryption to On
+5. Click save
+"""
+scope = "AAD"
+maturity = 1
+portal = "https://portal.azure.com/#browse/Microsoft.Sql%2Fservers%2Fdatabases"
+CISAZSection = "5.1.5"
+CISAZLevel = "L1"
+CISAZVersion = "3.0"
+
+[AzSQLServerAzADAdmin]
+score = 1
+short = "Entra ID Authentication is not enabled for SQL-Server"
+risk = "This could be an additional risk to the SQL Server. It eases attacks like password bruteforce."
+solution = "For each SQL-Server go to *Settings* and *Azure Active Directory*. Here click on *Set Admin* and choose an admin."
+scope = "Azure"
+maturity = 1
+portal = "https://portal.azure.com/#blade/HubsExtension/BrowseResource/resourceType/Microsoft.Sql%2Fservers"
+service = "SQLServer"
+CISAZSection = "5.1.4"
+CISAZLevel = "L1"
+CISAZVersion = "3.0"
+
+[AzSQLServerInboundTraffic]
+score = 1
+short = "SQL Server is exposed to the internet"
+risk = "This could be an additional risk to the SQL Server. It eases attacks like password bruteforce."
+solution = "Use the SQL Server Firewall to limit the traffic to the SQL Server for your needs."
+scope = "Azure"
+maturity = 1
+portal = "https://portal.azure.com/#blade/HubsExtension/BrowseResource/resourceType/Microsoft.Sql%2Fservers"
+service = "SQLServer"
+CISAZSection = "5.1.2"
+CISAZLevel = "L1"
+CISAZVersion = "3.0"
+
+[AzSQLServerMinimumTLSVersion]
+score = 1
+short = "SQL Server allows connections with TLS 1.1 or TLS 1.0"
+risk = "There exist some theoretical attacks on TLS 1.0 and TLS 1.1."
+long = "There is no need nowadays to offer TLS ciphers lower than 1.2."
+solution = "For each SQLServer go to *Security -> Networking -> Connectivity* and set *Minimum TLS version* to *TLS1.2*."
+scope = "Azure"
+maturity = 1
+portal = "https://portal.azure.com/#blade/HubsExtension/BrowseResource/resourceType/Microsoft.Sql%2Fservers"
+service = "SQLServer"
+
+[AzStorAcAccessKeyAge]
+score = 1
+short = "Old access key for storage account"
+risk = "If an attacker gets the access key he can access the storage account as long as it is valid."
+solution = "Change the access key for your Storage Accounts regularly"
+scope = "Azure"
+maturity = 1
+portal = "https://portal.azure.com/#blade/HubsExtension/BrowseResource/resourceType/Microsoft.Storage%2FStorageAccounts"
+service = "StorageAccount"
+CISAZSection = "4.4"
+CISAZLevel = "L1"
+CISAZVersion = "3.0"
+
+[AzStorAcAllowTrustedServices]
+score = 1
+short = "Storage Account block network access for Trusted Microsoft StorageAccountServices"
+risk = "This may prevent functions like Azure Backup or Azure Monitoring from correct working."
+solution = "When you are using services from Microsoft like Logging or Backup, allow the network access for these services."
+scope = "Azure"
+maturity = 1
+portal = "https://portal.azure.com/#blade/HubsExtension/BrowseResource/resourceType/Microsoft.Storage%2FStorageAccounts"
+service = "StorageAccount"
+
+[AzStorAcContainerPublicAccess]
+score = 1
+short = "Storage Account Container with \"Public Access Level\""
+risk = "This can lead to data loss."
+solution = "Ensure that only intended public container listed below."
+scope = "Azure"
+maturity = 1
+portal = "https://portal.azure.com/#blade/HubsExtension/BrowseResource/resourceType/Microsoft.Storage%2FStorageAccounts"
+service = "StorageAccount"
+CISAZSection = "4.6"
+CISAZLevel = "L1"
+CISAZVersion = "3.0"
+
+[AzStorAcCustomKeys]
+score = 1
+short = "Storage Account is encrypted with Microsoft Managed Keys"
+risk = "Microsoft may have access to your encrypted data."
+solution = "If you want to have control over your keys, you should use custom keys."
+scope = "Azure"
+maturity = 1
+portal = "https://portal.azure.com/#blade/HubsExtension/BrowseResource/resourceType/Microsoft.Storage%2FStorageAccounts"
+service = "StorageAccount"
+
+[AzStorAcInfraEncrypt]
+score = 0
+short = "Storage Accounts does not require infrastructure encryption"
+risk = "Encrypting data on the hardware level provides an additional protection against data loss."
+solution = "You cannot enable this for already existent Storage Accounts. You must create new one and on the tab *Encryption* choose the right options."
+scope = "Azure"
+maturity = 1
+portal = "https://portal.azure.com/#blade/HubsExtension/BrowseResource/resourceType/Microsoft.Storage%2FStorageAccounts"
+service = "StorageAccount"
+
+[AzStorAcKeyLastRotation]
+score = 1
+short = "Storage Account key is too old"
+risk = "If the Storage Accounts Access Keys are not regularly changed potentially compromised keys can result in long-term exploitable credential."
+solution = "Go to Storage Accounts and for each Storage Account go to *Access Key* and click *Rotate Key* for *key1* and *key2*."
+scope = "Azure"
+maturity = 1
+portal = "https://portal.azure.com/#blade/HubsExtension/BrowseResource/resourceType/Microsoft.Storage%2FStorageAccounts"
+service = "StorageAccount"
+
+[AzStorAcKeyRotationReminder]
+score = 1
+short = "Storage Account key rotation is not configured"
+risk = "If the Storage Accounts Access Keys are not regularly changed potentially compromised keys can result in long-term exploitable credential."
+solution = "Go to Storage Accounts and for each Storage Account go to *Access Key* and click the *Set rotation reminder*."
+scope = "Azure"
+maturity = 1
+portal = "https://portal.azure.com/#blade/HubsExtension/BrowseResource/resourceType/Microsoft.Storage%2FStorageAccounts"
+service = "StorageAccount"
+CISAZSection = "4.3"
+CISAZLevel = "L1"
+CISAZVersion = "3.0"
+
+[AzStorAcMinTLS12]
+score = 1
+short = "This Storage Account allows access with TLS 1.0 or TLS 1.1."
+risk = "There exist theoretical attacks for TLS 1.0 and TLS 1.1."
+solution = "Enable TLS 1.2 for the Storage Accounts shown here."
+scope = "Azure"
+maturity = 1
+portal = "https://portal.azure.com/#blade/HubsExtension/BrowseResource/resourceType/Microsoft.Storage%2FStorageAccounts"
+service = "StorageAccount"
+CISAZSection = "4.15"
+CISAZLevel = "L1"
+CISAZVersion = "3.0"
+
+[AzStorAcMinTLSVersion]
+score = 1
+short = "Storage Account does allow legacy TLS protocols"
+risk = "TLS 1.0 has some known vulnerabilities. Using this legacy protocol can reduce the security of data in transit."
+solution = "For each Storage Account under *Settings* go to *Configuration* and set the *Minimum TLS version* to *1.2*."
+scope = "Azure"
+maturity = 1
+portal = "https://portal.azure.com/#blade/HubsExtension/BrowseResource/resourceType/Microsoft.Storage%2FStorageAccounts"
+service = "StorageAccount"
+
+[AzStorAcNetworkAccess]
+score = 1
+short = "Storage Account allows access from arbitrary networks"
+risk = "This can lead to unwanted data loss."
+solution = "Restrict the access to only choosen networks."
+scope = "Azure"
+maturity = 1
+portal = "https://portal.azure.com/#blade/HubsExtension/BrowseResource/resourceType/Microsoft.Storage%2FStorageAccounts"
+service = "StorageAccount"
+
+[AzStorAcSecureTransfer]
+score = 1
+short = "StorageAccounts does not require a secure connection"
+risk = "User can use plaintext protocolls to access Storage Accounts. This can lead to potential data loss."
+scope = "Azure"
+maturity = 1
+portal = "https://portal.azure.com/#blade/HubsExtension/BrowseResource/resourceType/Microsoft.Storage%2FStorageAccounts"
+service = "StorageAccount"
+CISAZSection = "4.1"
+CISAZLevel = "L1"
+CISAZVersion = "3.0"
+
+[AzStorAcSoftDelete]
+score = 1
+short = "Storage Accounts without soft delete"
+risk = "This can lead to unwanted data loss, if someone accidentally deletes data."
+long = "When soft delete is disabled, data cannot be recovered if they are accidentally deleted."
+solution = "Enable *Soft Delete* for all Storage Accounts."
+scope = "Azure"
+maturity = 1
+portal = "https://portal.azure.com/#blade/HubsExtension/BrowseResource/resourceType/Microsoft.Storage%2FStorageAccounts"
+service = "StorageAccount"
+CISAZSection = "4.10"
+CISAZLevel = "L1"
+CISAZVersion = "3.0"
+
+[AzSubscriptionPolicy]
+score = 6
+short = "User can move Subscriptions in and out of Azure Active Directory"
+risk = "This increases the risk, that a bad actor moves an subscription to a Tenant, where he has more permissions."
+link = "https://www.cloud-architekt.net/detection-and-mitigation-consent-grant-attacks-azuread/"
+solution = "Go to the reference link and set *Subscription leaving AAD directory* and *Subscription entering AAD directory* to *Permit no one*."
+scope = "Azure"
+maturity = 1
+portal = "https://portal.azure.com/#view/Microsoft_Azure_SubscriptionManagement/ManageSubscriptionPoliciesBlade"
+
+[AzVirtMManagedDiskUsage]
+score = 0
+short = "Virtual Machine does not use Managed Disk"
+risk = "The Virtual Machine does not use a Managed Disk. Managed disks are encrypted by default and are more resilient against failure."
+solution = "Check if a migration to Managed Disk is possible."
+scope = "Azure"
+maturity = 1
+portal = "https://portal.azure.com/#view/HubsExtension/BrowseResource/resourceType/Microsoft.Compute%2FVirtualMachines"
+service = "VirtualMachine"
+CISAZSection = "8.2"
+CISAZLevel = "L1"
+CISAZVersion = "3.0"
+
+[CABlockLegacyAuth]
+score = 7
+short = "Legacy Authentication methods is not blocked by Conditional Access"
+risk = "This can expose your tenant to password brute force or password spraying attacks."
+long = "Legacy authentication does not support techniques like MFA."
+scope = "AAD"
+maturity = 0
+portal = "https://entra.microsoft.com/#view/Microsoft_AAD_ConditionalAccess/ConditionalAccessBlade/~/Overview/fromNav/Identity"
+CISM365Section = "5.2.2.3"
+CISM365Level = "L1"
+CISM365version = "6.0"
+
+[CheckCustomerLockBox]
+score = 5
+short = "Customer Lockbox is not enabled"
+risk = "Without Customer Lockbox, Microsoft support can access organization data without explicit approval, increasing the risk of unauthorized data access and exfiltration."
+solution = "Open the Microsoft 365 admin center at https://admin.microsoft.com and navigate to *Settings* > *Org settings* > *Security & privacy* tab. Select *Customer lockbox* and enable *Require approval for all data access requests*."
+long = "Customer Lockbox offers an approval process for Microsoft support personnel to access organization data and creates an audited trail to meet compliance requirements. Administrators will need to grant Microsoft access to the tenant environment prior to a Microsoft engineer accessing the environment for support or troubleshooting."
+scope = "AAD"
+maturity = 1
+portal = "https://admin.microsoft.com/#/Settings/Services/:/Settings/L1/CustomerLockbox"
+CISM365Section = "1.3.6"
+CISM365Level = "L1"
+CISM365version = "6.0"
+
+[DfCEAdditionalMailAlert]
+score = 4
+short = "No additional E-Mail Address for Defender Alert is configured"
+risk = "Only the owner or nobody does receive E-Mail Notification from Microsoft if Defender for Cloud detects something malicious."
+solution = "To ensure that your security team receives notifications from Defender for Cloud go to [https://portal.azure.com/#view/Microsoft_Azure_Security/SecurityMenuBlade/~/EnvironmentSettings](https://portal.azure.com/#view/Microsoft_Azure_Security/SecurityMenuBlade/~/EnvironmentSettings) and choose a Subscription or Resource Group. Then click on *Email notification* and enter in the field *Additional email addresses* the addresses you want."
+scope = "Azure"
+maturity = 1
+portal = "https://portal.azure.com/#view/Microsoft_Azure_Security/SecurityMenuBlade/~/EnvironmentSettings"
+
+[DfCEEMailAlertSeverity]
+score = 0
+short = "Email Security Alerts for a subscription are not configured correctly"
+risk = "Your security team and subscription owners might receive too many emails regarding security issues."
+solution = "Go to [https://portal.azure.com/#view/Microsoft_Azure_Security/SecurityMenuBlade/~/EnvironmentSettings](https://portal.azure.com/#view/Microsoft_Azure_Security/SecurityMenuBlade/~/EnvironmentSettings) and choose a Subscription or Resource Group. Then check *Notify about alerts with the following severity* and choose *High*."
+scope = "Azure"
+maturity = 1
+portal = "https://portal.azure.com/#view/Microsoft_Azure_Security/SecurityMenuBlade/~/EnvironmentSettings"
+CISAZSection = "3.1.14"
+CISAZLevel = "L1"
+CISAZVersion = "3.0"
+
+[DfCEMailSecAlerts]
+score = 4
+short = "E-Mail Security Alerts for a subscription are disabled or not configured"
+risk = "The owner of a subscription is not configured to receive E-Mail Notification from Microsoft if Defender for Cloud detects something malicious."
+solution = "Go to [https://portal.azure.com/#view/Microsoft_Azure_Security/SecurityMenuBlade/~/EnvironmentSettings](https://portal.azure.com/#view/Microsoft_Azure_Security/SecurityMenuBlade/~/EnvironmentSettings) and choose a Subscription or Resource Group. Then click on *Email notification* and set *All users with the following roles* to *Owner*."
+scope = "Azure"
+maturity = 1
+portal = "https://portal.azure.com/#view/Microsoft_Azure_Security/SecurityMenuBlade/~/EnvironmentSettings"
+
+[DirSyncSoftMatch]
+score = 5
+short = "Your Tenant uses soft (SMTP)-match to synchronize on-premise user and cloud user."
+risk = "It is possible to use SMTP matching to synchronize on-premise users to Azure AD users that are eligible for administrative roles. Attackers who have gained on-premise access can use this approach to compromise Azure AD."
+link = "https://docs.microsoft.com/en-us/powershell/module/msonline/set-msoldirsyncfeature?view=azureadps-1.0#example-2-block-soft-matching-for-the-tenant"
+solution = "Disable SMTP matching with the PowerShell commandlet written in the reference."
+scope = "AAD"
+maturity = 1
+portal = "https://www.semperis.com/blog/smtp-matching-abuse-in-azure-ad/"
+
+[EntraIDPasswordPolicy]
+score = 5
+short = "Entra passwords can expire"
+risk = "Users tend to use weak passwords when they have to change passwords too often."
+link = "https://pages.nist.gov/800-63-3/sp800-63b.html"
+solution = "Go to [https://admin.microsoft.com/#/Settings/SecurityPrivacy/:/Settings/L1/PasswordPolicy](https://admin.microsoft.com/#/Settings/SecurityPrivacy/:/Settings/L1/PasswordPolicy) and mark the box for *Set passwords to never expire (recommended)*"
+scope = "AAD"
+maturity = 1
+portal = "https://admin.microsoft.com/#/Settings/SecurityPrivacy/:/Settings/L1/PasswordPolicy"
+CISM365Section = "1.3.1"
+CISM365Level = "L1"
+CISM365version = "6.0"
+
+[EXOAdminAuditLogConfig]
+score = 7
+short = "Unified AuditLog is turned off"
+risk = "Attacks on Exchange Online can go unnoticed."
+link = "https://learn.microsoft.com/en-us/purview/audit-log-enable-disable?view=o365-worldwide"
+solution = "Go to Microsoft PureView and select *Audit*. Afterwards click *Start recording user and admin activity*. As an alternative you can use the PowerShell Exchange Online Management Module and use the following command: `Set-AdminAuditLogConfig -UnifiedAuditLogIngestionEnabled $true`."
+scope = "EXO"
+maturity = 1
+portal = "https://compliance.microsoft.com/auditlogsearch"
+CISM365Section = "3.1.1"
+CISM365Level = "L1"
+CISM365version = "6.0"
+
+[EXOAntiPhishingPolicyEnabled]
+score = 4
+short = "No anti-phishing policy is configured"
+risk = "Users are not protected against impersonation and spoofing attacks."
+solution = """Navigate to Microsoft 365 Defender > Email & collaboration > Policies & rules > Threat policies > Anti-phishing. Create a policy with:
+- Phishing email threshold: 3 - More Aggressive
+- Enable users to protect and add key users
+- Enable domains to protect with owned domains
+- Enable mailbox intelligence and spoof intelligence
+- Set impersonation actions to Quarantine the message
+- Enable safety tips for first contact, user and domain impersonation"""
+scope = "EXO"
+maturity = 1
+portal = "https://security.microsoft.com/antiphishing"
+CISM365Section = "2.1.7"
+CISM365Level = "L2"
+CISM365version = "6.0"
+
+[EXOAuditBypassEnabled]
+score = 3
+short = "AuditBypass is enabled on some mailboxes"
+risk = "If audit bypass is enabled on some mailboxes, user or computer associated with the rule will not record any access or actions performed on the mailbox."
+solution = """
+1. Connect to Exchange Online with the Exchange Online PowerShell Module. 
+2. For all mailboxes in the 'Affected Objects' list, run the following command: Set-MailboxAuditBypassAssociation -Identity <ID> -AuditBypassEnabled $false.
+"""
+scope = "EXO"
+maturity = 1
+CISM365Section = "6.1.3"
+CISM365Level = "L1"
+CISM365version = "6.0"
+
+[EXOAutomaticForwarding]
+score = 5
+short = "Auto forwarding is not disabled"
+risk = "An attacker can use auto forwarding to exfiltrate data."
+link = "https://docs.microsoft.com/en-us/archive/blogs/exovoice/disable-automatic-forwarding-in-office-365-and-exchange-server-to-prevent-information-leakage "
+scope = "EXO"
+maturity = 1
+
+[EXOBasicAuth]
+score = 5
+short = "Basic Authentication is enabled for ExchangeOnline"
+risk = "This expose your tenant to attacks like Password brute force or Password Spray."
+link = "https://docs.microsoft.com/en-us/exchange/clients-and-mobile-in-exchange-online/disable-basic-authentication-in-exchange-online"
+long = "Basic authentication does not support secure authentication mechanism like MFA"
+solution = "Go to the reference link and disable Basic Authentication for Exchange. If Basic Authentication is deactivated in the GUI check the PowerShell Command *AllowBasicAuthOutlookService*."
+scope = "EXO"
+maturity = 1
+portal = "https://admin.microsoft.com/#/Settings/Services/:/Settings/L1/ModernAuthentication"
+
+[EXOBookingsMailboxCreationEnabled]
+score = 4
+short = "Shared Bookings mailbox creation is enabled"
+risk = "Shared Bookings pages can be exploited to impersonate legitimate users using internal email addresses, enabling social engineering attacks and fraudulent actions like fund transfers."
+solution = "Run *Set-OwaMailboxPolicy 'OwaMailboxPolicy-Default' -BookingsMailboxCreationEnabled:$false* or disable Bookings at the organization level with *Set-OrganizationConfig -BookingsEnabled $false*."
+long = "Shared Bookings allows users to create self-service scheduling pages. Threat actors can misuse this to mimic high-profile identities or create authoritative-looking addresses for social engineering. Access should be restricted to users with a clear business need."
+scope = "EXO"
+maturity = 1
+CISM365Section = "1.3.9"
+CISM365Level = "L1"
+CISM365version = "6.0"
+
+[EXOBypassSafeAttachments]
+score = 3
+short = "Transport Rules in EXO bypasses SafeAttachment checking"
+risk = "This expose your organization an additional risk."
+link = "https://www.undocumented-features.com/2018/05/10/atp-safe-attachments-safe-links-and-anti-phishing-policies-or-all-the-policies-you-can-shake-a-stick-at/#Bypass_Safe_Attachments_Processing"
+solution = "Go to the portal URL and check the mentioned transport rules."
+scope = "EXO"
+maturity = 1
+portal = "https://admin.exchange.microsoft.com/#/transportrules"
+
+[EXOBypassSafeLinks]
+score = 3
+short = "Transport Rules in Exchange Online bypasses SafeLink checking"
+risk = "This expose your organization an additional risk for Phishing."
+link = "https://www.undocumented-features.com/2018/05/10/atp-safe-attachments-safe-links-and-anti-phishing-policies-or-all-the-policies-you-can-shake-a-stick-at/#Bypass_Safe_Attachments_Processing"
+solution = "See reference."
+scope = "EXO"
+maturity = 1
+portal = "https://admin.exchange.microsoft.com/#/transportrules"
+
+[EXOCheckSPF]
+score = 3
+short = "Missing SPF for Domains used in Exchange Online"
+risk = "The Sender Policy Framework can prevent that someone impersonates your domain."
+solution = "You must set the SPF records at your DNS provider's portal."
+scope = "EXO"
+maturity = 1
+CISM365Section = "2.1.8"
+CISM365Level = "L1"
+CISM365version = "6.0"
+
+[EXOCheckTransportRules]
+score = 5
+short = "Transport rules seems to forward mails to external domains"
+risk = "This can lead to unwanted data loss."
+long = "Data are automatically sent outside of the organization."
+solution = "Check and disable the rules shown below."
+scope = "EXO"
+maturity = 1
+portal = "https://admin.exchange.microsoft.com/#/transportrules"
+CISM365Section = "6.2.1"
+CISM365Level = "L1"
+CISM365version = "6.0"
+
+[EXOClientForwardingIsBlocked]
+score = 4
+short = "Mail forwarding is not prevent by Exchange Online"
+risk = "This can lead to an unwanted data loss."
+long = "No mail flow rule detected"
+solution = "that blocks auto forwarding on the client site. User might be able automatically forward mails outside the organization."
+scope = "EXO"
+maturity = 0
+portal = "https://admin.exchange.microsoft.com/#/transportrules"
+CISM365Section = "6.2.1"
+CISM365Level = "L1"
+CISM365version = "6.0"
+
+[EXOCommonAttachmentFilter]
+score = 3
+short = "Common Attachment Filter is not active"
+risk = "This increases the risk that your company is compromised with malicious attachments."
+solution = "Go to the link in the reference and ensure that in the policy with the highest priority the value for *Enable the common attachments filter* is *On*. "
+scope = "EXO"
+maturity = 0
+portal = "https://security.microsoft.com/antimalwarev2"
+CISM365Section = "2.1.2"
+CISM365Level = "L1"
+CISM365version = "6.0"
+
+[EXOComprehensiveAttachmentFilter]
+score = 4
+short = "No comprehensive attachment filter policy is configured"
+risk = "Known and unknown malicious file types can be attached to emails. Business Email Compromise (BEC) attacks may succeed using legacy formats, binaries or compressed files."
+long = "The default Microsoft policy covers 53 extensions. A comprehensive policy with 184+ extensions provides better protection against malware delivery mechanisms."
+solution = """Use PowerShell to create a comprehensive attachment filter policy:
+1. Connect to Exchange Online using Connect-ExchangeOnline
+2. Create policy with New-MalwareFilterPolicy:
+   - Name: 'My New Policy'
+   - EnableFileFilter: $true
+   - ZapEnabled: $true
+   - EnableInternalSenderAdminNotifications: $true
+   - InternalSenderAdminAddress: 'admin@contoso.com'
+   - FileTypes: [184 extension list from CIS benchmark]
+3. Create rule with New-MalwareFilterRule for all accepted domains
+4. Enable the rule when ready
+Note: Due to the number of extensions, PowerShell is required."""
+scope = "EXO"
+maturity = 1
+portal = "https://security.microsoft.com/antimalwarev2"
+CISM365Section = "2.1.11"
+CISM365Level = "L2"
+CISM365version = "6.0"
+
+[EXOConnectionFilterIPAllowList]
+score = 5
+short = "E-Mail scanning: Connection filter IP allow list is not empty"
+risk = "The IP allow list defines which sender can bypass E-Mail scanning. This increases the risk of becoming a victim of malicious mails."
+solution = """
+1.	Go to Microsoft 365 Defender https://security.microsoft.com.
+2.	Click to expand Email & collaboration select Policies & rules -> Threat policies.
+3.	In Policies select Anti-spam.
+4.	Click on the Connection filter policy (Default).
+5.	Click Edit connection filter policy.
+6.	Remove any IP entries from Always allow messages from the following IP addresses or address range:.
+"""
+scope = "EXO"
+maturity = 1
+CISM365Section = "2.1.12"
+CISM365Level = "L1"
+CISM365version = "6.0"
+
+[EXOConnectionFilterIPSafeList]
+score = 5
+short = "Connection Filter Safe List is enabled"
+risk = "The IP safe list defines which sender can bypass E-Mail scanning. This increases the risk of becoming a victim of malicious mails. The admins have no insights which mail servers are trusted."
+solution = """
+1.	Go to Microsoft 365 Defender https://security.microsoft.com.
+2.	Click to expand Email & collaboration select Policies & rules -> Threat policies.
+3.	In Policies select Anti-spam.
+4.	Click on the Connection filter policy (Default).
+5.	Click Edit connection filter policy.
+6.	Uncheck Turn on safe list.
+"""
+scope = "EXO"
+maturity = 1
+CISM365Section = "2.1.13"
+CISM365Level = "L1"
+CISM365version = "6.0"
+
+[EXODKIM]
+score = 5
+short = "Not all of the Exchange Online Domains have DKIM enabled"
+risk = "This increases the risk, that an attacker can impersonate your domain."
+solution = "Configure DKIM for all your domains."
+scope = "EXO"
+maturity = 1
+CISM365Section = "2.1.9"
+CISM365Level = "L1"
+CISM365version = "6.0"
+
+[EXODMARC]
+score = 5
+short = "Not all of Exchange Online Domains have DMARC enabled"
+risk = "This increases the risk, that an attacker can impersonate your domain."
+solution = "Enable DMARC for all your domains."
+scope = "EXO"
+maturity = 1
+CISM365Section = "2.1.10"
+CISM365Level = "L1"
+CISM365version = "6.0"
+
+[EXOExternalSenderIdentified]
+score = 3
+short = "Mails from external senders are not marked"
+risk = "Marking mails from external senders as external, reduces the risk that users become a victim of phishing attacks."
+solution = """
+1. Connect to Exchange Online with the Exchange Online PowerShell Module. 
+2. Run the following command: Set-ExternalInOutlook -Enabled $true.
+"""
+scope = "EXO"
+maturity = 1
+CISM365Section = "6.2.3"
+CISM365Level = "L1"
+CISM365version = "6.0"
+
+[EXOInboundAntiSpamAllowDomains]
+score = 5
+short = "Inbound anti-spam policy is not empty"
+risk = "Mails send from the specified domains can bypass the Anti-Spam filter. This increases the risk for the users."
+solution = """
+1.	Go to Microsoft 365 Defender https://security.microsoft.com.
+2.	Expand Email & collaboration select Policies & rules> Threat policies.
+3.	Under Policies select Anti-spam.
+4.	Open each if the compliance inbound anti-spam policy.
+5.	Click Edit allowed and blocked senders and domains.
+6.	Select Allow domains.
+7.	Delete each domain from the list.
+8.	Click Done and Save.
+9.	Repeat as needed.
+"""
+scope = "EXO"
+maturity = 1
+CISM365Section = "2.1.14"
+CISM365Level = "L1"
+CISM365version = "6.0"
+
+[EXOMailboxAudit]
+score = 6
+short = "Not all mailboxes have audit enabled"
+risk = "Malicious behavior can go unnoticed."
+link = "https://docs.microsoft.com/en-us/microsoft-365/compliance/enable-mailbox-auditing?view=o365-worldwide"
+solution = "To enable logging, see the reference link."
+scope = "EXO"
+maturity = 1
+
+[EXOMailboxAuditActionsEnabled]
+score = 5
+short = "Mailbox audit actions are not properly configured"
+risk = "Without proper audit actions configured, security operations, forensics, and investigations on mailbox activities cannot be performed effectively. Certain mailbox types must have AuditEnabled set to True at the mailbox level."
+solution = """For each UserMailbox ensure AuditEnabled is True and the following audit actions are included:
+- Admin actions: ApplyRecord, Copy, Create, FolderBind, HardDelete, MailItemsAccessed, Move, MoveToDeletedItems, SendAs, SendOnBehalf, Send, SoftDelete, Update, UpdateCalendarDelegation, UpdateFolderPermissions, UpdateInboxRules
+- Delegate actions: ApplyRecord, Create, FolderBind, HardDelete, Move, MailItemsAccessed, MoveToDeletedItems, SendAs, SendOnBehalf, SoftDelete, Update, UpdateFolderPermissions, UpdateInboxRules
+- Owner actions: ApplyRecord, Create, HardDelete, MailboxLogin, Move, MailItemsAccessed, MoveToDeletedItems, Send, SoftDelete, Update, UpdateCalendarDelegation, UpdateFolderPermissions, UpdateInboxRules
+
+Use PowerShell Set-Mailbox cmdlet to configure the audit actions."""
+scope = "EXO"
+maturity = 1
+portal = "https://admin.exchange.microsoft.com/#/mailboxes"
+CISM365Section = "6.1.2"
+CISM365Level = "L1"
+CISM365version = "6.0"
+
+[EXOMailTipps]
+score = 1
+short = "Not all Mailbox Tips are enabled"
+risk = "Mailbox Tips can prevent a user to sent mails to too many recipients or sending mails outside the organization."
+solution = "Use the Exchange Online PowerShell Module to connect to Exchange Online. Then run the following code `Set-OrganizationConfig -MailTipsAllTipsEnabled $true -MailTipsExternalRecipientsTipsEnabled $true -MailTipsGroupMetricsEnabled $true -MailTipsLargeAudienceThreshold \"25\"`."
+scope = "EXO"
+maturity = 1
+CISM365Section = "6.5.2"
+CISM365Level = "L1"
+CISM365version = "6.0"
+
+[EXOModernauthentication]
+score = 10
+short = "Exchange Online Modern Authentication is not enabled"
+risk = "If modern authentication is disabled, the users cannot use a more secure authentication mechanism."
+link = "https://docs.microsoft.com/en-us/exchange/clients-and-mobile-in-exchange-online/enable-or-disable-modern-authentication-in-exchange-online"
+solution = "Go to Portal URL and check *Turn on modern authentication for Outlook 2013 for Windows and later (recommended)*."
+scope = "EXO"
+maturity = 1
+portal = "https://admin.microsoft.com/#/Settings/Services/:/Settings/L1/ModernAuthentication"
+CISM365Section = "6.5.1"
+CISM365Level = "L1"
+CISM365version = "6.0"
+
+[EXONotificationUsersSendingMalware]
+score = 5
+short = "No one is notified if a user sends potentially malicious mail"
+risk = "Sending malicious mails is often an indication of an infected computer. Thus, not notifying admins in the case increases the investigation time."
+link = "https://docs.microsoft.com/en-us/microsoft-365/security/office-365-security/configure-anti-malware-policies?view=o365-worldwide"
+solution = "See reference."
+scope = "EXO"
+maturity = 1
+portal = "https://security.microsoft.com/antimalwarev2"
+CISM365Section = "2.1.3"
+CISM365Level = "L1"
+CISM365version = "6.0"
+
+[EXOOrganizationalMailboxAudit]
+score = 3
+short = "Default Mailbox Auditing is not enabled"
+risk = "Basic mailbox actions are not monitored if they are not explicitly configured on the mailbox itself."
+solution = """Enable default auditing for all mailboxes. Todo enable default auditing use the Exchange Online PowerShell Module with the command 'Set-OrganizationConfig -AuditDisabled $false'"""
+scope = "EXO"
+maturity = 1
+CISM365Section = "6.1.1"
+CISM365Level = "L1"
+CISM365version = "6.0"
+
+[EXOSafeAttachmentForM365Enabled]
+score = 4
+short = "Safe Attachments for SharePoint, OneDrive and Teams is not enabled"
+risk = "Malicious files in SharePoint, OneDrive and Teams are not detected and can be shared across the organization."
+solution = "Navigate to Microsoft 365 Defender > Email & collaboration > Policies & rules > Threat policies > Safe Attachments > Global settings. Enable Defender for Office 365 for SharePoint, OneDrive and Teams. Enable Safe Documents for Office clients."
+scope = "EXO"
+maturity = 1
+portal = "https://security.microsoft.com/safeattachmentv2"
+CISM365Section = "2.1.5"
+CISM365Level = "L2"
+CISM365version = "6.0"
+
+[EXOSafeAttachmentPolicyEnabled]
+score = 4
+short = "Safe Attachments policy is not enabled"
+risk = "Email attachments are not scanned for malware before delivery."
+solution = "Navigate to Microsoft 365 Defender > Email & collaboration > Policies & rules > Threat policies > Safe Attachments. Create a policy with Block action and AdminOnlyAccessPolicy quarantine."
+long = "Safe Attachments scans email attachments in a secure environment before delivery. This protects against new or unknown malware threats."
+scope = "EXO"
+maturity = 1
+portal = "https://security.microsoft.com/safeattachmentv2"
+CISM365Section = "2.1.4"
+CISM365Level = "L2"
+CISM365version = "6.0"
+
+[EXOSafeLinksEnabled]
+score = 4
+short = "Safe Links for Office Applications is not enabled"
+risk = "URLs in Office documents and emails are not protected against phishing attacks with time-of-click verification."
+solution = "Navigate to Microsoft 365 Defender > Email & collaboration > Policies & rules > Threat policies > Safe Links. Create a policy enabling Safe Links for Email, Teams and Office 365 Apps with real-time URL scanning."
+long = "Safe Links extends phishing protection to documents and emails containing hyperlinks. It checks URLs against known malicious links and can block unsafe content even after delivery."
+scope = "EXO"
+maturity = 1
+portal = "https://security.microsoft.com/safelinksv2"
+CISM365Section = "2.1.1"
+CISM365Level = "L2"
+CISM365version = "6.0"
+
+[EXOOutboundAntiSpamLimits]
+score = 4
+short = "Outbound anti-spam message limits are not configured"
+risk = "Compromised accounts can send unlimited spam, leading to Business Email Compromise (BEC) attacks. Microsoft may block the organization's email, disrupting communication and damaging reputation."
+long = "Outbound anti-spam limits detect and restrict suspicious email-sending behavior. When exceeded, messages are routed through a high-risk delivery pool to protect IP reputation."
+solution = """Navigate to Microsoft 365 Defender > Email & collaboration > Policies & rules > Threat policies > Anti-spam > Anti-spam outbound policy (Default) > Edit protection settings.
+Configure the following limits:
+- External message limit: 500 per hour
+- Internal message limit: 1000 per hour
+- Daily message limit: 1000
+- Over limit action: Restrict the user from sending mail
+- Configure notification mailbox for blocked senders"""
+scope = "EXO"
+maturity = 1
+portal = "https://security.microsoft.com/antispam"
+CISM365Section = "2.1.15"
+CISM365Level = "L1"
+CISM365version = "6.0"
+
+[EXOOutlookAddins]
+score = 1
+short = "Users can install Outlook Add-Ins"
+risk = "Outlook Add-Ins can contain malicious functions."
+link = "https://docs.microsoft.com/en-us/exchange/clients-and-mobile-in-exchange-online/add-ins-for-outlook/specify-who-can-install-and-manage-add-ins"
+solution = "See reference."
+scope = "EXO"
+maturity = 0
+portal = "https://outlook.office365.com/ecp/?form=eac&mkt=en-US"
+CISM365Section = "6.3.1"
+CISM365Level = "L2"
+CISM365version = "6.0"
+
+[EXOOwaExternalStorageProvider]
+score = 1
+short = "Users can use external storage for Outlook Web"
+risk = "This increases the risk of unwanted data loss."
+link = "https://docs.microsoft.com/en-us/powershell/module/exchange/set-owamailboxpolicy?view=exchange-ps"
+solution = "Connect to Exchange Online using `Connect-ExchangeOnline` CMDLET and run the following code: `Set-OwaMailboxPolicy -Identity OwaMailboxPolicy-Default -AdditionalStorageProvidersAvailable $false`."
+scope = "EXO"
+maturity = 1
+CISM365Section = "6.5.3"
+CISM365Level = "L2"
+CISM365version = "6.0"
+
+[EXOPriorirtyProtectionEnabled]
+score = 5
+short = "Priority account protection is not enabled"
+risk = "High-value accounts (CEOs, CISOs, CFOs, IT admins) are targeted by spear phishing and whaling attacks. Without priority protection these accounts lack enhanced security monitoring."
+long = "Priority account protection enables advanced custom security features for frequently targeted users with access to sensitive, confidential, financial, or high-priority information."
+solution = """3-step remediation process:
+Step 1 - Enable Priority account protection:
+Navigate to Microsoft 365 Defender > System > Settings > Email & collaboration > Priority account protection. Set to On.
+Step 2 - Tag priority accounts:
+Go to User tags > select PRIORITY ACCOUNT tag > Edit > Add members (users or groups). Repeat for additional tags like Finance or HR.
+Step 3 - Configure email alerts:
+Go to Email & collaboration > Policies & rules > Alert policy > New Alert Policy.
+Create alerts for:
+- Activity: Detected malware in an email message (Inbound, Priority account tag)
+- Activity: Phishing email detected at time of delivery (Inbound, Priority account tag)
+Set Severity to High, Category to Threat management."""
+scope = "EXO"
+maturity = 1
+portal = "https://security.microsoft.com/securitysettings/userTags"
+CISM365Section = "2.4.1"
+CISM365Level = "L1"
+CISM365version = "6.0"
+
+[EXORejectDirectSend]
+score = 7
+short = "Direct Send submissions are not rejected"
+risk = "Direct Send allows unauthenticated email delivery directly to Exchange Online mailboxes. This introduces significant security risks including phishing and spoofing attacks, as emails bypass standard authentication mechanisms and can impersonate internal users. Attackers actively exploit Direct Send to distribute malicious content without needing credentials."
+solution = "Connect to Exchange Online using `Connect-ExchangeOnline` and run the following PowerShell command: `Set-OrganizationConfig -RejectDirectSend $true`."
+scope = "EXO"
+maturity = 1
+portal = "https://admin.exchange.microsoft.com"
+CISM365Section = "6.5.5"
+CISM365Level = "L2"
+CISM365version = "6.0"
+
+[EXOSharedMailboxNoLogin]
+score = 6
+short = "Login to shared mailboxes is not blocked"
+risk = "A shared mailbox is an EntraID user without known password. However an administrator or an attacker with enough privileges can reset the password and login as that user."
+solution = """
+1. To disable shared mailboxes go to the Microsoft 365 admin center.
+2. Click on Users
+3. Go to Active users
+4. Search for the mailbox in the search bar
+5. Open the property page and click on Block sign-in
+"""
+scope = "EXO"
+maturity = 1
+portal = "https://admin.microsoft.com/#/SharedMailbox"
+CISM365Section = "1.2.2"
+CISM365Level = "L1"
+CISM365version = "6.0"
+
+[EXOSMTPAuthDisabled]
+score = 5
+short = "SMT Auth is not disabled"
+risk = "SMTP Auth is a legacy protocol which does not support modern auth as Conditional Access."
+solution = """
+1.	Go to Exchange admin center: https://admin.exchange.microsoft.com.
+2.	Go to Setting -> Mail flow
+3. Ensure that 'Turn off SMTP AUTH protocol for your organization' is marked.
+"""
+scope = "EXO"
+maturity = 1
+CISM365Section = "6.5.4"
+CISM365Level = "L1"
+CISM365version = "6.0"
+
+[EXOSpamNotifyAdmins]
+score = 1
+short = "Exchange Online Spam policy does not notify admins if a mail is blocked"
+risk = "The increases the reaction time in case a user's account starts to send malicious mails."
+solution = "Go to the Security Center and change or add the needed Anti-Spam Policy."
+scope = "EXO"
+maturity = 1
+portal = "https://security.microsoft.com/antispam"
+CISM365Section = "2.1.6"
+CISM365Level = "L1"
+CISM365version = "6.0"
+
+[EXOTeamsZAPEnabled]
+score = 4
+short = "Zero-hour auto purge (ZAP) for Microsoft Teams is not enabled"
+risk = "Users remain exposed to zero-day malware and weaponized content in Teams messages. Without ZAP malicious messages cannot be retroactively removed after delivery."
+long = "ZAP continually monitors spam and malware signatures and takes automated retroactive action on messages delivered up to 48 hours ago."
+solution = "Navigate to Microsoft Defender > System > Settings > Email & collaboration > Microsoft Teams protection. Set Zero-hour auto purge (ZAP) to On."
+scope = "EXO"
+maturity = 1
+portal = "https://security.microsoft.com/securitysettings/teamsProtectionPolicy"
+CISM365Section = "2.4.4"
+CISM365Level = "L1"
+CISM365version = "6.0"
+
+[EXOWhitelistBypass]
+score = 3
+short = "Your EXO has Transport Rules, that can bypass anti-spam and anti-malware scanning by whitelisting certain domains"
+risk = "This exposes your organization an additional risk."
+link = "https://docs.microsoft.com/en-us/Exchange/security-and-compliance/mail-flow-rules/mail-flow-rules"
+solution = "Go to the Exchange Admin Center and check the rules."
+scope = "EXO"
+maturity = 1
+portal = "https://admin.exchange.microsoft.com/#/transportrules"
+CISM365Section = "6.2.2"
+CISM365Level = "L1"
+CISM365version = "6.0"
+
+[GroupAllowsSelfService]
+score = 2
+short = "Users can manage the group membership of their own security groups"
+risk = "This may result in unwanted groups configurations or group memberships."
+solution = "Go to the Portal URL and set *Owners can manage group membership requests in My Groups* is set to *No*."
+scope = "AAD"
+maturity = 1
+portal = "https://entra.microsoft.com/#view/Microsoft_AAD_IAM/GroupsManagementMenuBlade/~/General/menuId/General"
+
+[GroupAllowUserToCreateSecGroups]
+score = 2
+short = "All users can create security groups using the Azure Portal, API or PowerShell"
+risk = "This can result in a high number of groups over the time."
+solution = "Go to the Portal URL and set *Users can create security groups in Azure portals, API or PowerShell* to *No*."
+scope = "AAD"
+maturity = 1
+portal = "https://entra.microsoft.com/#view/Microsoft_AAD_IAM/GroupsManagementMenuBlade/~/General/menuId/General"
+CISM365Section = "5.1.3.2"
+CISM365Level = "L1"
+CISM365version = "6.0"
+
+[GroupForGuests]
+score = 3
+short = "No dynamic group for guest users exists"
+risk = "Guest accounts are not automatically grouped. Conditional access rules and security measures may not apply consistently to new guest accounts."
+long = "A dynamic group automatically adds guest users based on the userType attribute, ensuring all guests are subject to the same access controls."
+solution = """Navigate to Microsoft Entra admin center > Groups > All groups > New group.
+Set Group type: Security, Membership type: Dynamic User.
+Select Add dynamic query > Edit and enter:
+(user.userType -eq "Guest")
+Click OK and Save."""
+scope = "AAD"
+maturity = 1
+portal = "https://entra.microsoft.com/#view/Microsoft_AAD_IAM/GroupsManagementMenuBlade/~/AllGroups"
+CISM365Section = "5.1.3.1"
+CISM365Level = "L1"
+CISM365version = "6.0"
+
+[GroupLifecycle]
+score = 3
+short = "Temporary groups do not expire"
+risk = "This can result in a high number of groups over the time."
+link = "https://docs.microsoft.com/en-us/microsoft-365/solutions/plan-organization-lifecycle-governance?view=o365-worldwide"
+solution = "Go to the Portal URL and set *Enable expiration for these Microsoft 365 groups* to *Yes*."
+scope = "AAD"
+maturity = 1
+portal = "https://entra.microsoft.com/#view/Microsoft_AAD_IAM/GroupsManagementMenuBlade/~/Lifecycle/menuId/General"
+
+[GroupM365GroupManagement]
+score = 1
+short = "All member can create Microsoft 365 Groups in Azure portals, API or PowerShell"
+risk = "This may result in unwanted groups configurations or group memberships."
+solution = "Go to the Portal URL and set *Users can create Microsoft 365 groups in Azure portals, API or PowerShell* to *No*."
+scope = "AAD"
+maturity = 1
+portal = "https://entra.microsoft.com/#view/Microsoft_AAD_IAM/GroupsManagementMenuBlade/~/General/menuId/General"
+
+[GroupPublic]
+score = 3
+short = "Your tenant has public groups"
+risk = "This can bypass some security controls for group protected data, if every user can add himself to a group."
+link = "https://www.dummies.com/software/microsoft-office/office-365-groups/"
+solution = "Go to the Portal URL and review all public groups and check if they are needed."
+scope = "AAD"
+maturity = 1
+portal = "https://entra.microsoft.com/#view/Microsoft_AAD_IAM/GroupsManagementMenuBlade/~/AllGroups/menuId/AllGroups"
+CISM365Section = "1.2.1"
+CISM365Level = "L1"
+CISM365version = "6.0"
+
+[M365WebStorageProvider]
+score = 1
+short = "Third-party storage services are not restricted in M365 web"
+risk = "This increases the risk of unwanted data loss."
+solution = "Go to the portal link and ensure that *Let users open files stored in third-party storage services in Microsoft 365 on the web* is not checked."
+scope = "Azure"
+maturity = 1
+portal = "https://admin.microsoft.com/Adminportal/Home#/Settings/Services/:/Settings/L1/OfficeOnline"
+CISM365Section = "1.3.7"
+CISM365Level = "L2"
+CISM365version = "6.0"
+
+[MDMAlphanumericPasswords]
+scope = "MDM"
+maturity = 0
+portal = "https://endpoint.microsoft.com/?ref=AdminCenter#blade/Microsoft_Intune_DeviceSettings/DevicesMenu/configurationProfiles"
+
+[MDMDevicePolicySet]
+scope = "MDM"
+maturity = 0
+portal = "https://endpoint.microsoft.com/?ref=AdminCenter#blade/Microsoft_Intune_DeviceSettings/DevicesMenu/configurationProfiles"
+
+[MDMDeviceWipe]
+scope = "MDM"
+maturity = 0
+portal = "https://endpoint.microsoft.com/?ref=AdminCenter#blade/Microsoft_Intune_DeviceSettings/DevicesMenu/configurationProfiles"
+
+[MDMJailBreak]
+scope = "MDM"
+maturity = 0
+portal = "https://endpoint.microsoft.com/?ref=AdminCenter#blade/Microsoft_Intune_DeviceSettings/DevicesMenu/configurationProfiles"
+
+[MDMLockScreen]
+scope = "MDM"
+maturity = 0
+portal = "https://endpoint.microsoft.com/?ref=AdminCenter#blade/Microsoft_Intune_DeviceSettings/DevicesMenu/configurationProfiles"
+
+[MDMManagedMail]
+scope = "MDM"
+maturity = 0
+portal = "https://endpoint.microsoft.com/?ref=AdminCenter#blade/Microsoft_Intune_DeviceSettings/DevicesComplianceMenu/policies"
+
+[MDMPasswordComplexity]
+scope = "MDM"
+maturity = 0
+portal = "https://endpoint.microsoft.com/?ref=AdminCenter#blade/Microsoft_Intune_DeviceSettings/DevicesMenu/configurationProfiles"
+
+[MDMPasswordNeverExpired]
+scope = "MDM"
+maturity = 0
+portal = "https://endpoint.microsoft.com/?ref=AdminCenter#blade/Microsoft_Intune_DeviceSettings/DevicesMenu/configurationProfiles"
+
+[MDMPasswordReuse]
+scope = "MDM"
+maturity = 0
+portal = "https://endpoint.microsoft.com/?ref=AdminCenter#blade/Microsoft_Intune_DeviceSettings/DevicesMenu/configurationProfiles"
+
+[MDMSimplePasswords]
+scope = "MDM"
+maturity = 0
+portal = "https://endpoint.microsoft.com/?ref=AdminCenter#blade/Microsoft_Intune_DeviceSettings/DevicesMenu/configurationProfiles"
+
+[MDMStorageEncryption]
+scope = "MDM"
+maturity = 0
+portal = "https://endpoint.microsoft.com/?ref=AdminCenter#blade/Microsoft_Intune_DeviceSettings/DevicesComplianceMenu/policies"
+
+[ODBSharing]
+score = 4
+short = "OneDrive content sharing is not restricted to organization only"
+risk = "OneDrive provides less oversight than SharePoint. Unrestricted external sharing increases the risk of inadvertent sharing of privileged information by end users."
+solution = """
+1. Navigate to SharePoint admin center https://admin.microsoft.com/sharepoint.
+2. Click to expand Policies > Sharing.
+3. Locate the External sharing section.
+4. Under OneDrive, set the slider bar to Only people in your organization.
+"""
+scope = "SPO"
+maturity = 1
+portal = "https://admin.microsoft.com/sharepoint"
+CISM365Section = "7.2.4"
+CISM365Level = "L2"
+CISM365version = "6.0"
+
+[OfficeAddIns]
+score = 4
+short = "Word, Excel and PowerPoint add-ins are allowed"
+risk = "Attackers can misuse add-ins for malicious purpose."
+solution = "Go to the Portal URL and uncheck *Let users access the Office Store* and *Let users start trials on behalf of your organization*."
+scope = "AAD"
+maturity = 1
+portal = "https://admin.microsoft.com/#/Settings/Services/:/Settings/L1/Store"
+CISM365Section = "1.3.4"
+CISM365Level = "L1"
+CISM365version = "6.0"
+
+[OfficeCalenderSharing]
+score = 4
+short = "User can share their calendar with external users"
+risk = "This increases the risk, that external user gain personal information about your users."
+solution = "Go to the Portal URL and unmark *Let your users share their calendars with people outside of your organization who have Office 365 or Exchange*."
+scope = "AAD"
+maturity = 1
+portal = "https://admin.microsoft.com/Adminportal/Home#/Settings/Services/:/Settings/L1/Calendar"
+CISM365Section = "1.3.3"
+CISM365Level = "L2"
+CISM365version = "6.0"
+
+[OfficeDLPLabels]
+score = 0
+short = "The tenant has no DLP Label Policies"
+risk = "This increases the risk of unwanted data loss."
+link = "https://learn.microsoft.com/en-us/microsoft-365/compliance/dlp-learn-about-dlp?view=o365-worldwide#deploy-your-policies-in-production"
+solution = "Go to the Portal URL and set the DLP label policies according to your needs."
+scope = "AAD"
+maturity = 0
+portal = "https://compliance.microsoft.com/informationprotection/labelpolicies"
+CISM365Section = "3.3.1"
+CISM365Level = "L1"
+CISM365version = "6.0"
+
+[OfficeDLPPolicies]
+score = 0
+short = "The tenant has no DLP Policies"
+risk = "This increases the risk of unwanted data loss."
+link = "https://learn.microsoft.com/en-us/microsoft-365/compliance/dlp-learn-about-dlp?view=o365-worldwide#deploy-your-policies-in-production"
+solution = "Configure DLP policies according to your needs."
+scope = "AAD"
+maturity = 0
+portal = "https://compliance.microsoft.com/datalossprevention?viewid=policies"
+CISM365Section = "3.2.1"
+CISM365Level = "L1"
+CISM365version = "6.0"
+
+[OfficeDLPPoliciesTeams]
+score = 4
+short = "DLP policies are not enabled for Microsoft Teams"
+risk = "Sensitive information like credit card numbers or PII can be accidentally shared in Teams chats and channels without detection or blocking."
+long = "The default Teams DLP policy detects and blocks sensitive content types. DLP rules should be customized to identify and protect information important to the organization."
+solution = """Navigate to Microsoft Purview compliance portal > Data loss prevention > Policies.
+1. Select Default policy for Teams and click Edit policy
+2. At Choose locations enable Teams chat and channel messages
+3. Ensure Default Teams DLP policy rule Status is On
+4. Set Policy mode to Turn it on right away
+5. Review and submit
+Note: If no default policy exists, create a new policy with rules to protect sensitive data like credit cards and PII."""
+scope = "AAD"
+maturity = 1
+portal = "https://purview.microsoft.com/datalossprevention/policies"
+CISM365Section = "3.2.2"
+CISM365Level = "L1"
+CISM365version = "6.0"
+
+[OfficeFormsPhishingProtection]
+score = 2
+short = "Phishing protection for Microsoft Forms is not enabled"
+risk = "This prevents attackers using Microsoft Forms to asking your users for personal information."
+link = "https://support.microsoft.com/en-us/office/microsoft-forms-and-proactive-phishing-prevention-b3950a20-296d-4e8e-96f5-594ced998a90"
+solution = "Go to the Portal URL and mark *Add internal phishing protection*."
+scope = "AAD"
+maturity = 1
+portal = "https://admin.microsoft.com/#/Settings/Services/:/Settings/L1/OfficeForms"
+CISM365Section = "1.3.5"
+CISM365Level = "L1"
+CISM365version = "6.0"
+
+[OfficeSwaySettings]
+score = 3
+short = "Users can share Sways with external users"
+risk = "This increases the risk of data loss."
+link = "https://support.microsoft.com/en-us/office/administrator-settings-for-sway-d298e79b-b6ab-44c6-9239-aa312f5784d4"
+solution = "Go to the Portal URL and unmark the line *Let people in your organization share their sways with people outside your organization*."
+scope = "AAD"
+maturity = 1
+portal = "https://admin.microsoft.com/#/Settings/Services/:/Settings/L1/Sway"
+CISM365Section = "1.3.8"
+CISM365Level = "L2"
+CISM365version = "6.0"
+
+[SPOCustomScriptExecution]
+score = 4
+short = "Some SharePoint Sites have custom scripts enabled"
+risk = "The scripts in SharePoint Sites run in the context of the user visiting this Site. When they contain malicious functions the user visiting the page could be compromised."
+solution = """
+1. Connect to SharePoint Online using the SharePoint Online Management Shell.
+2. Run the following command: 'Set-SPOSite -Identity <SiteURL> -DenyAddAndCustomizePages 1'
+"""
+scope = "SPO"
+maturity = 1
+
+[SPODefaultLinkPermissions]
+score = 4
+short = "Default link permission is not set to view"
+risk = "This increases the risk that a user might accidentally grant too many permissions when sharing a link."
+solution = "Go to your SharePoint Admin Center and check ensure that 'Choose the permission that's selected by default for sharing links ' is set to 'View'."
+scope = "SPO"
+maturity = 1
+portal = "https://<YOURDOMAIN>-admin.sharepoint.com/_layouts/15/online/AdminHome.aspx#/sharing"
+CISM365Section = "7.2.11"
+CISM365Level = "L1"
+CISM365version = "6.0"
+
+[SPODefaultLinkSharingType]
+score = 4
+short = "Default link sharing is not restricted"
+risk = "When setting the default link sharing to the most restricied setting, the risk lowers that an user does share content with too many people."
+solution = "Go to your SharePoint Admin Center and check ensure that 'Choose the type of link that's selected by default when users share files and folders in SharePoint and OneDrive' is set to 'Specific people (only the people the user specifies)'."
+scope = "SPO"
+maturity = 1
+portal = "https://<YOURDOMAIN>-admin.sharepoint.com/_layouts/15/online/AdminHome.aspx#/sharing"
+CISM365Section = "7.2.7"
+CISM365Level = "L1"
+CISM365version = "6.0"
+
+[SPODisallowInfectedFileDownload]
+score = 4
+short = "Defender for Office 365 detected infected files are allowed for download in SharePoint"
+risk = "SharePoint Online allows download of files that Defender for Office 365 has detected as infected. This exposes users to malware execution and lateral movement within the organization."
+link = "https://learn.microsoft.com/en-us/microsoft-365/security/office-365-security/sharepoint-defender-for-office-365"
+solution = """
+1. Connect to SharePoint Online using Connect-SPOService -Url https://tenant-admin.sharepoint.com, replacing "tenant" with the appropriate value.
+2. Run the following PowerShell command: Set-SPOTenant -DisallowInfectedFileDownload $true
+Note: The Global Reader role cannot access SharePoint using PowerShell.
+"""
+scope = "SPO"
+maturity = 1
+CISM365Section = "7.3.1"
+CISM365Level = "L2"
+CISM365version = "6.0"
+
+[SPOEntraB2BEnabled]
+score = 3
+short = "SharePoint and OneDrive are not integrated to Entra ID B2B"
+risk = "This makes the auditing of Guest access harder and does not allow to apply Azure Access Policies to them."
+link = "https://learn.microsoft.com/en-us/sharepoint/sharepoint-azureb2b-integration#enabling-the-integration"
+solution = "You can enable Azure AD B2B Integration by using the following command `Set-SPOTenant -EnableAzureADB2BIntegration $true`."
+scope = "SPO"
+maturity = 1
+CISM365Section = "7.2.2"
+CISM365Level = "L1"
+CISM365version = "6.0"
+
+[SPOExpireExternalLinksAnonymous]
+score = 4
+short = "Anonymous shared link will not expire or the expiry time is too long"
+risk = "Users with access to the link have unlimited access to the data."
+link = "https://learn.microsoft.com/en-us/sharepoint/turn-external-sharing-on-or-off"
+solution = "Go to the SharePoint Online Admin Panel and mark under *Choose expiration and permissions options for Anyone links.* the line *These links must expire within this many days*. Set the value to your needs."
+scope = "SPO"
+maturity = 1
+service = "https://<YOURDOMAIN>-admin.sharepoint.com/_layouts/15/online/AdminHome.aspx#/sharing"
+
+[SPOGuestSharing]
+score = 4
+short = "Guests can share data, they do not own"
+risk = "This increases the risk that you lose control over your data in SharePoint."
+solution = "Go to the Portal URL and under *More external sharing settings* unmark the section *Allow guests to share items they don't own*"
+scope = "SPO"
+maturity = 1
+portal = "https://<YOURDOMAIN>-admin.sharepoint.com/_layouts/15/online/AdminHome.aspx#/sharing"
+CISM365Section = "7.2.5"
+CISM365Level = "L2"
+CISM365version = "6.0"
+
+[SPOSharingExternally]
+score = 6
+short = "SharePoint external sharing is not restricted to specific domains"
+risk = "Attackers can expose sensitive information to external entities through sharing. Unrestricted domain sharing increases the attack surface."
+solution = """
+1.	Navigate to SharePoint admin center https://admin.microsoft.com/sharepoint.
+2.	Expand Policies then click Sharing.
+3.	Expand More external sharing settings and check Limit external sharing by domain.
+4.	Select Add domains to add a list of approved domains.
+5.	Click Save at the bottom of the page.
+"""
+scope = "SPO"
+maturity = 1
+portal = "https://<YOURDOMAIN>-admin.sharepoint.com/_layouts/15/online/AdminHome.aspx#/sharing"
+CISM365Section = "7.2.6"
+CISM365Level = "L2"
+CISM365version = "6.0"
+
+[SPOLegacyAuth]
+score = 10
+short = "SharePoint Online allows to use legacy authentication protocol"
+risk = "This increases the attack surface against user credentials."
+solution = "Go to the Portal URL and under *Apps that don't use modern authentication* set the value to *Block access*."
+scope = "SPO"
+maturity = 1
+portal = "https://<YOURDOMAIN>-admin.sharepoint.com/_layouts/15/online/AdminHome.aspx#/accessControl"
+CISM365Section = "7.2.1"
+CISM365Level = "L1"
+CISM365version = "6.0"
+
+[SPOModernAuthDisabled]
+score = 1
+short = "Modern authentication for SharePoint is disabled"
+risk = "This increases the risk, that an attacker gain unauthorized access to your SharePoint instance."
+link = "https://docs.microsoft.com/en-us/powershell/module/sharepoint-online/set-spotenant?view=sharepoint-ps"
+solution = "You have to use the PowerShell and Set-SPOTenant to activate modern authentication."
+scope = "SPO"
+maturity = 1
+
+[SPOOndriveSharingExpires]
+score = 4
+short = "OneDrive access for guest does not expire automatically"
+risk = "Allowing guest access for an indefinite amount of time could lead to loss of data confidentiality and oversight."
+solution = """
+1.	Go to SharePoint admin center https://admin.microsoft.com/sharepoint.
+2.	Click on Policies > Sharing.
+3.	Scroll to and expand More external sharing settings.
+4.	Set Guest access to a site or OneDrive will expire automatically after this many days to 30
+"""
+scope = "SPO"
+maturity = 1
+portal = "https://<YOURDOMAIN>-admin.sharepoint.com/_layouts/15/online/AdminHome.aspx#/sharing"
+CISM365Section = "7.2.9"
+CISM365Level = "L1"
+CISM365version = "6.0"
+
+[SPOOneDriveSync]
+score = 7
+short = "OneDrive can be synced with unmanaged devices"
+risk = "This can lead to data loss."
+solution = "Go to the Portal URL and add your on-premise domain GUID (Get-ADDomain) to the list of *Allow syncing only on computers joined to specific domains*. If you do not have an on-premise domain, use conditional access to block access to OneDrive from unmanaged devices."
+scope = "SPO"
+maturity = 1
+portal = "https://<YOUR-DOMAIN>-admin.sharepoint.com/_layouts/15/online/AdminHome.aspx#/settings/ODBSync"
+CISM365Section = "7.3.2"
+CISM365Level = "L2"
+CISM365version = "6.0"
+
+[SPOSharing]
+score = 4
+short = "SharePoint Online allows sharing documents with arbitrary domains"
+risk = "This can lead to data leakage."
+link = "https://www.michev.info/Blog/Post/969/you-can-now-control-external-sharing-in-sharepoint-online-per-domain"
+solution = "Go to your SharePoint Admin Center and check the sharing settings carefully. You can find more information under the reference section."
+scope = "SPO"
+maturity = 1
+portal = "https://<YOURDOMAIN>-admin.sharepoint.com/_layouts/15/online/AdminHome.aspx#/sharing"
+CISM365Section = "7.2.3"
+CISM365Level = "L1"
+CISM365version = "6.0"
+
+[SPOVerificationCode]
+score = 4
+short = "Guest access to SPO with verification code does not expire"
+risk = "Prolonged guest access without reauthentication increases the risk of unauthorized data exposure."
+solution = """
+1.	Go to SharePoint admin center https://admin.microsoft.com/sharepoint.
+2.	Click on Policies > Sharing.
+3.	Scroll to and expand More external sharing settings.
+4.	Ensure 'People who use a verification code must reauthenticate after this many days' is set to '15' or less.
+"""
+scope = "SPO"
+maturity = 1
+portal = "https://<YOURDOMAIN>-admin.sharepoint.com/_layouts/15/online/AdminHome.aspx#/sharing"
+CISM365Section = "7.2.10"
+CISM365Level = "L1"
+CISM365version = "6.0"
+
+[TeamsAnonymousJoin]
+score = 1
+short = "Anonymous users can join a Teams meeting unverified"
+risk = "This increases the risk that anonymous participants join meetings containing sensitive information without being vetted by the organizer."
+solution = """
+1.	Go to Microsoft Teams admin center https://admin.teams.microsoft.com.
+2.	Click on 'Settings & policies' select 'Global (Org-wide default) settings'.
+3.	Click on 'Meetings' to open the meeting settings section.
+4.	In 'meeting join & lobby' set 'Anonymous users can join a meeting unverified' to 'Off'.
+"""
+scope = "Teams"
+maturity = 1
+portal = "https://admin.teams.microsoft.com/company-wide-settings/external-communications"
+CISM365Section = "8.5.1"
+CISM365Level = "L2"
+CISM365version = "6.0"
+
+[TeamsAllowAnonymousUserStartMeetings]
+score = 1
+short = "Anonymous user can start Teams meeting"
+risk = "This increases the risk that anonymous participants spam meetings"
+solution = """
+1.	Go to Microsoft Teams admin center https://admin.teams.microsoft.com.
+2.	Click on 'Meetings' select 'Meeting policies'.
+3.	Click Global (Org-wide default).
+4.	In 'meeting join & lobby' check that 'Anonymous users and dial-in callers can start a meeting' is set to 'Off'.
+"""
+scope = "Teams"
+maturity = 1
+portal = "https://admin.teams.microsoft.com/company-wide-settings/external-communications"
+CISM365Section = "8.5.2"
+CISM365Level = "L1"
+CISM365version = "6.0"
+
+[TeamsBypassLobby]
+score = 1
+short = "Guests can bypass the Teams Meeting lobby"
+risk = "This increases the risk that anonymous participants spam meetings"
+solution = """
+1.	Go to Microsoft Teams admin center https://admin.teams.microsoft.com.
+2.	Click on 'Meetings' select 'Meeting policies'.
+3.	Click Global (Org-wide default).
+4.	In 'meeting join & lobby' check that 'Who can bypass the lobby' is set to 'People in my org'.
+"""
+scope = "Teams"
+maturity = 1
+portal = "https://admin.teams.microsoft.com/company-wide-settings/external-communications"
+CISM365Section = "8.5.3"
+CISM365Level = "L1"
+CISM365version = "6.0"
+
+[TeamsBypassLobbyDialIn]
+score = 1
+short = "Dial-In user can bypass the Teams Meeting lobby"
+risk = "This increases the risk that anonymous participants spam meetings"
+solution = """
+1.	Go to Microsoft Teams admin center https://admin.teams.microsoft.com.
+2.	Click on 'Meetings' select 'Meeting policies'.
+3.	Click Global (Org-wide default).
+4.	In 'meeting join & lobby' check that 'People dialing in can bypass the lobby' is set to 'Off'.
+"""
+scope = "Teams"
+maturity = 1
+portal = "https://admin.teams.microsoft.com/company-wide-settings/external-communications"
+CISM365Section = "8.5.4"
+CISM365Level = "L1"
+CISM365version = "6.0"
+
+[TeamsDisableChatAnonymUsers]
+score = 1
+short = "Meeting chat allows anonymous users to read and write messages"
+risk = "Allowing anonymous users to participate in meeting chat increases the risk of inappropriate content exposure or unauthorized access to sensitive information shared during the meeting."
+solution = """
+1.	Navigate to Microsoft Teams admin center https://admin.teams.microsoft.com.
+2.	Select Settings & policies > Global (Org-wide default) settings.
+3.	Select Meetings to open the meeting settings section.
+4.	Under meeting engagement set Meeting chat to On for everyone but anonymous users.
+"""
+scope = "Teams"
+maturity = 1
+portal = "https://admin.teams.microsoft.com/company-wide-settings/external-communications"
+CISM365Section = "8.5.5"
+CISM365Level = "L2"
+CISM365version = "6.0"
+
+[TeamsOnlyOrganizerCanPresent]
+score = 1
+short = "Users other than organizers and co-organizers can present in Teams meetings"
+risk = "Allowing unauthorized individuals to present increases the risk that inappropriate or malicious content is shown during a meeting."
+solution = """
+1.	Navigate to Microsoft Teams admin center https://admin.teams.microsoft.com.
+2.	Select Settings & policies > Global (Org-wide default) settings.
+3.	Select Meetings to open the meeting settings section.
+4.	Under content sharing set Who can present to Only organizers and co-organizers.
+"""
+scope = "Teams"
+maturity = 1
+portal = "https://admin.teams.microsoft.com/company-wide-settings/external-communications"
+CISM365Section = "8.5.6"
+CISM365Level = "L2"
+CISM365version = "6.0"
+
+[TeamsExternalCannotRequestControl]
+score = 1
+short = "External participants can give or request control in Teams meetings"
+risk = "Allowing external participants to present or request control increases the risk that malicious users expose inappropriate or unauthorized content during a meeting. External participants include external users, guests, and anonymous users."
+solution = """
+1.	Navigate to Microsoft Teams admin center https://admin.teams.microsoft.com.
+2.	Select Settings & policies > Global (Org-wide default) settings.
+3.	Select Meetings to open the meeting settings section.
+4.	Under content sharing set External participants can give or request control to Off.
+"""
+scope = "Teams"
+maturity = 1
+portal = "https://admin.teams.microsoft.com/company-wide-settings/external-communications"
+CISM365Section = "8.5.7"
+CISM365Level = "L1"
+CISM365version = "6.0"
+
+[TeamsExternalChatIsOff]
+score = 1
+short = "External meeting chat is enabled for untrusted organizations"
+risk = "Restricting access to chat in meetings hosted by external organizations limits the opportunity for exploits like GIFShell or DarkGate malware from being delivered to users."
+solution = """
+1.	Navigate to Microsoft Teams admin center https://admin.teams.microsoft.com.
+2.	Select Settings & policies > Global (Org-wide default) settings.
+3.	Select Meetings to open the meeting settings section.
+4.	Under meeting engagement set External meeting chat to Off.
+"""
+scope = "Teams"
+maturity = 1
+portal = "https://admin.teams.microsoft.com/company-wide-settings/external-communications"
+CISM365Section = "8.5.8"
+CISM365Level = "L2"
+CISM365version = "6.0"
+
+[TeamsRecordingIsOff]
+score = 1
+short = "Meeting recording is enabled in the Global meeting policy"
+risk = "Enabling meeting recording by default allows any user to capture and potentially share sensitive meeting content. Restricting recording to organizers, co-organizers, and leads reduces the risk of unauthorized capture or disclosure of confidential discussions."
+solution = """
+1.	Navigate to Microsoft Teams admin center https://admin.teams.microsoft.com.
+2.	Select Settings & policies > Global (Org-wide default) settings.
+3.	Select Meetings to open the meeting settings section.
+4.	Under Recording & transcription set Meeting recording to Off.
+"""
+scope = "Teams"
+maturity = 1
+portal = "https://admin.teams.microsoft.com/company-wide-settings/external-communications"
+CISM365Section = "8.5.9"
+CISM365Level = "L2"
+CISM365version = "6.0"
+
+[TeamsCanUserReportConcerns]
+score = 3
+short = "Users cannot report security concerns in Teams"
+risk = "Without message reporting enabled, users have no streamlined way to flag suspicious or malicious messages. Sensitive reported content may also be sent to Microsoft instead of staying within the organization."
+solution = """
+1.	Navigate to Microsoft Teams admin center https://admin.teams.microsoft.com.
+2.	Select Settings & policies > Global (Org-wide default) settings.
+3.	Select Messaging to open the messaging settings section.
+4.	Set Report a security concern to On.
+5.	Navigate to Microsoft 365 Defender https://security.microsoft.com/.
+6.	Click on Settings > Email & collaboration > User reported settings.
+7.	Scroll to Microsoft Teams.
+8.	Check Monitor reported messages in Microsoft Teams and Save.
+9.	Set Send reported messages to My reporting mailbox only and configure reports to be sent to authorized staff.
+"""
+scope = "Teams"
+maturity = 1
+portal = "https://admin.teams.microsoft.com/company-wide-settings/teams-settings"
+CISM365Section = "8.6.1"
+CISM365Level = "L1"
+CISM365version = "6.0"
+
+[TeamsExternalCommunication]
+scope = "Teams"
+score = 1
+maturity = 1
+portal = "https://admin.teams.microsoft.com/company-wide-settings/external-communications"
+
+[TeamsExternalCommunicationInbound]
+score = 7
+short = "Teams inbound communication with users outside your organization is allowed"
+risk = "Allowing users to communicate outside the organization increases the risk of phishing and data leakage."
+link = "https://danielchronlund.com/2021/02/22/manage-teams-external-access-for-allowed-domains-using-powershell-and-teams-approvals/"
+solution = "Go to the Portal Url and check the setting under *Teams accounts not managed by an organization*."
+scope = "Teams"
+maturity = 1
+portal = "https://admin.teams.microsoft.com/company-wide-settings/external-communications"
+CISM365Section = "8.2.3"
+CISM365Level = "L1"
+CISM365version = "6.0"
+
+[TeamsExternalCommunicationTrial]
+score = 7
+short = "Teams communication with accounts in trial tenants is enabled"
+risk = "Trial tenants require minimal setup, making them easy for threat actors to abuse. Known attack vectors include DarkGate malware, Midnight Blizzard phishing, GIFShell, and username enumeration."
+solution = """
+1.	Go to Microsoft Teams admin center https://admin.teams.microsoft.com.
+2.	Click to expand Users and select External access.
+3.	Select the Organization settings tab.
+4.	Set People in my organization can communicate with accounts in trial Teams tenant to Off.
+"""
+scope = "Teams"
+maturity = 1
+portal = "https://admin.teams.microsoft.com/company-wide-settings/external-communications"
+CISM365Section = "8.2.4"
+CISM365Level = "L1"
+CISM365version = "6.0"
+
+[TeamsExternalCommunicationWithConsumer]
+score = 7
+short = "Teams communication with teams consumer user is allowed"
+risk = "Allowing users to communicate outside the organization increases the risk of phishing and data leakage."
+link = "https://danielchronlund.com/2021/02/22/manage-teams-external-access-for-allowed-domains-using-powershell-and-teams-approvals/"
+solution = "Go to the Portal Url and check the setting under *Teams accounts not managed by an organization*."
+scope = "Teams"
+maturity = 1
+portal = "https://admin.teams.microsoft.com/company-wide-settings/external-communications"
+CISM365Section = "8.2.2"
+CISM365Level = "L1"
+CISM365version = "6.0"
+
+[TeamsExternalDomainsRestricted]
+score = 5
+short = "External domains are not restricted in Teams"
+risk = "Unrestricted external domain access exposes the organization to phishing, social engineering, and malware delivery via Teams. Known attack vectors include DarkGate malware, Midnight Blizzard phishing, GIFShell, and username enumeration."
+solution = """
+1.	Go to Microsoft Teams admin center https://admin.teams.microsoft.com.
+2.	Click to expand Users and select External access.
+3.	Select the Policies tab.
+4.	Click on the Global (Org-wide default) policy.
+5.	Set Teams and Skype for Business users in external organizations to Off.
+6.	Click Save.
+"""
+scope = "Teams"
+maturity = 1
+portal = "https://admin.teams.microsoft.com/company-wide-settings/external-communications"
+CISM365Section = "8.2.1"
+CISM365Level = "L2"
+CISM365version = "6.0"
+
+[TeamsExternalSharingProvider]
+short = "Teams allows to use Box, DropBox, GoogleDrive, CitrixFiles or Egnyte as cloud storage provider"
+risk = "Allowing third-party storage provider increases the risk of data leakage."
+score = 3
+solution = "Go to [https://admin.teams.microsoft.com/company-wide-settings/teams-settings](Teams Settings) and choose under *Files* you wanted storage provider."
+scope = "Teams"
+maturity = 1
+portal = "https://admin.teams.microsoft.com/company-wide-settings/teams-settings"
+CISM365Section = "8.1.1"
+CISM365Level = "L2"
+CISM365version = "6.0"
+
+[TeamsMailIntoChannel]
+score = 2
+short = "Teams allow user to send mails into a channel"
+risk = "Channel email addresses are not under the tenants control. An attacker finding a channel email address can email directly to it"
+solution = """
+1.	Go to Microsoft Teams admin center https://admin.teams.microsoft.com.
+2.	Click on 'Teams' select 'Teams settings'.
+3.	In email integration check that 'Users can send emails to a channel email address' is 'Off'.
+"""
+scope = "Teams"
+maturity = 1
+portal = "https://admin.teams.microsoft.com/company-wide-settings/external-communications"
+CISM365Section = "8.1.2"
+CISM365Level = "L1"
+CISM365version = "6.0"
+
+[UserAdminConsent]
+score = 1
+short = "Admin consent workflow is not enabled in your organization"
+risk = "No direct risk at all."
+link = "https://learn.microsoft.com/en-us/azure/active-directory/manage-apps/configure-admin-consent-workflow"
+long = "Not allowing your users to use other applications with their credential, can lead to a lot of angry calls. However, your admins should check each request carefully."
+solution = "Go to the Portal Url and set *Users can request admin consent to apps they are unable to consent* to *Yes*."
+scope = "AAD"
+maturity = 1
+portal = "https://entra.microsoft.com/#view/Microsoft_AAD_IAM/ConsentPoliciesMenuBlade/~/AdminConsentSettings"
+CISM365Section = "5.1.5.2"
+CISM365Level = "L1"
+CISM365version = "6.0"
+
+[UserAdminsCloudOnly]
+score = 8
+short = "Some administrative users are synced to on-prem AD"
+risk = "This increases the risk, if the on-prem AD is compromised, that an attacker can compromise Entra too."
+solution = "Remove the user from the administrative group and create a cloud-only user"
+scope = "AAD"
+maturity = 1
+CISM365Section = "1.1.1"
+CISM365Level = "L1"
+CISM365version = "6.0"
+
+[UserAllAdminsHaveMFA]
+score = 10
+short = "Not all privileged accounts uses MFA"
+risk = "This increases the risk, that one of your admins becomes a victim of a phishing attack."
+link = "https://learn.microsoft.com/en-us/azure/active-directory/conditional-access/howto-conditional-access-policy-admin-mfa"
+solution = "No discussion here. Force them to use MFA!"
+scope = "AAD"
+maturity = 1
+service = "null"
+CISM365Section = "5.2.2.1"
+CISM365Level = "L1"
+CISM365version = "6.0"
+CISAZSection = "2.1.2"
+CISAZLevel = "L1"
+CISAZVersion = "3.0"
+
+[UserAllowAdHocSubscriptions]
+score = 1
+short = "User can create trial subscriptions."
+risk = "This can result in a high number of uncontrolled subscriptions."
+link = "https://docs.microsoft.com/en-us/azure/active-directory/authentication/tutorial-enable-sspr"
+solution = "See the link in the reference section."
+scope = "AAD"
+maturity = 1
+
+[UserAllowCreationOfAzureTenants]
+score = 2
+short = "User can create their own tenant"
+risk = "User can create their own tenants."
+link = "https://twitter.com/JeffreyAppel7/status/1593219049215127555?s=20&t=LH-3XsLy4td6QumFXe9AnA"
+solution = "Go to the *User Settings* in the Entra Admin Portal and set *Restrict non-admin users from creating tenants* to *Yes*."
+scope = "AAD"
+maturity = 1
+portal = "https://entra.microsoft.com/#view/Microsoft_AAD_UsersAndTenants/UserManagementMenuBlade/~/UserSettings/menuId/UserSettings"
+CISM365Section = "5.1.2.3"
+CISM365Level = "L1"
+CISM365version = "6.0"
+CISAZSection = "2.3"
+CISAZLevel = "L1"
+CISAZVersion = "3.0"
+
+[UserAllUserHaveMFA]
+score = 7
+short = "Not all users using MFA"
+risk = "Users without MFA are easier victims to phishing attacks."
+link = "https://learn.microsoft.com/en-us/azure/active-directory/conditional-access/howto-conditional-access-policy-all-users-mfa"
+solution = "Think about to implement MFA for all your users."
+scope = "AAD"
+maturity = 0
+CISM365Section = "5.2.2.2"
+CISM365Level = "L1"
+CISM365version = "6.0"
+
+[UserBitLockerSelfService]
+score = 8
+short = "BitLocker Self-Service is enabled"
+risk = "User can see their BitLocker Keys in Azure. This gives the user an easy way to escalate their privileges to local Admin."
+link = "https://learn.microsoft.com/en-us/azure/active-directory/devices/device-management-azure-portal#block-users-from-viewing-their-bitlocker-keys-preview"
+solution = "Use the link in the reference below to disable this."
+scope = "AAD"
+maturity = 1
+portal = "https://entra.microsoft.com/#view/Microsoft_AAD_Devices/DevicesMenuBlade/~/DeviceSettings/menuId/recoveryKeys"
+CISM365Section = "5.1.4.6"
+CISM365Level = "L2"
+CISM365version = "6.0"
+
+[UserBannedPasswordListUsed]
+score = 8
+short = "Custom banned password list is not configured"
+risk = "Users may choose passwords based on company-related terms like brand names, product names, or office locations. Attackers often use 'mangler' tools to create permutations of these organization-specific words when attempting to crack passwords."
+solution = """
+1. Navigate to Microsoft Entra admin center https://entra.microsoft.com/
+2. Click to expand Protection > Authentication methods
+3. Select Password protection
+4. Set Enforce custom list to Yes
+5. In Custom banned password list add company-specific terms such as brand names, product names, locations, internal terms, and abbreviations
+6. Click Save
+"""
+scope = "AAD"
+maturity = 1
+portal = "https://entra.microsoft.com/#view/Microsoft_AAD_IAM/AuthenticationMethodsMenuBlade/~/PasswordProtection"
+CISM365Section = "5.2.3.2"
+CISM365Level = "L1"
+CISM365version = "6.0"
+
+[UserBannedPasswordListUsedOnPrem]
+score = 5
+short = "Password protection for on-prem Active Directory is not enabled"
+risk = "Without Entra Password Protection deployed to on-premises Active Directory, users can set weak or leaked passwords that are prohibited in Entra ID but allowed on-prem, weakening overall security posture in hybrid environments."
+solution = """
+1. Download and install the Azure AD Password Proxies and DC Agents from https://www.microsoft.com/download/details.aspx?id=57071
+2. Navigate to Microsoft Entra admin center https://entra.microsoft.com/
+3. Click to expand Protection > Authentication methods
+4. Select Password protection
+5. Set Enable password protection on Windows Server Active Directory to Yes
+6. Set Mode to Enforced
+"""
+scope = "AAD"
+maturity = 1
+portal = "https://entra.microsoft.com/#view/Microsoft_AAD_IAM/AuthenticationMethodsMenuBlade/~/PasswordProtection"
+CISM365Section = "5.2.3.3"
+CISM365Level = "L1"
+CISM365version = "6.0"
+
+[UserCanAddGalleryApps]
+score = 1
+short = "User can add arbitrary apps to \"My Apps\""
+risk = "When a user adds an App within your tenant it shares internal information with the tenant."
+solution = "Go to the Portal Link and set *Set Users can add gallery apps to My Apps* to *No*."
+scope = "AAD"
+maturity = 1
+portal = "https://entra.microsoft.com/#view/Microsoft_AAD_IAM/FeatureSettingsBlade"
+
+[UserCanViewOtherUsersProfile]
+score = 1
+short = "User can see profile information about other users"
+risk = "This can help to perform further phishing attacks or to collect other relevant data."
+link = "https://docs.microsoft.com/en-us/powershell/module/msonline/set-msolcompanysettings?view=azureadps-1.0"
+scope = "AAD"
+maturity = 1
+
+[UserConsent]
+score = 10
+short = "User can consent to apps accessing data on their behalf"
+risk = "Malicious apps are often used in phishing scenarios. Thus, allowing users to consent to applications increases the risk for a successful attack."
+link = "https://docs.microsoft.com/en-us/azure/active-directory/manage-apps/configure-user-consent?tabs=azure-portal"
+solution = "Go to the Portal URL and set *Users can request admin consent to apps they are unable to consent* to *No*."
+scope = "AAD"
+maturity = 1
+portal = "https://entra.microsoft.com/#view/Microsoft_AAD_IAM/ConsentPoliciesMenuBlade/~/UserSettings"
+CISM365Section = "5.1.5.1"
+CISM365Level = "L2"
+CISM365version = "6.0"
+
+[UserGuestWithHighPrivRole]
+score = 9
+short = "Guests are member of Global Admin/Privileged Authentication Admin role"
+risk = "Having guests with these roles increases the risk that you lose control over your tenant."
+solution = "Check if these guest account needs these roles."
+scope = "AAD"
+maturity = 1
+portal = "https://portal.azure.com/#blade/Microsoft_AAD_IAM/ActiveDirectoryMenuBlade/RolesAndAdministrators"
+
+[UserHighPrivUsePIM]
+score = 7
+short = "Privileged roles have permanent assignments instead of eligible (PIM)"
+risk = "Permanent role assignments increase the attack surface. If a privileged account is compromised, the attacker has immediate access without any additional controls. Just-in-time access through PIM reduces the window of opportunity for attacks."
+solution = """
+1. Navigate to Microsoft Entra admin center https://entra.microsoft.com/
+2. Click to expand Identity Governance > Privileged Identity Management
+3. Under Manage select Microsoft Entra Roles
+4. Under Manage select Roles
+5. For each sensitive role, review members with ASSIGNMENT TYPE of Permanent
+6. Click on ... and choose Make eligible for permanent members
+
+Roles to review:
+* Application Administrator
+* Authentication Administrator
+* Azure Information Protection Administrator
+* Billing Administrator
+* Cloud Application Administrator
+* Cloud Device Administrator
+* Compliance Administrator
+* Customer LockBox Access Approver
+* Exchange Administrator
+* Fabric Administrator
+* Global Administrator
+* HelpDesk Administrator
+* Intune Administrator
+* Kaizala Administrator
+* License Administrator
+* Microsoft Entra Joined Device Local Administrator
+* Password Administrator
+* Privileged Authentication Administrator
+* Privileged Role Administrator
+* Security Administrator
+* SharePoint Administrator
+* Skype for Business Administrator
+* Teams Administrator
+* User Administrator
+"""
+scope = "AAD"
+maturity = 2
+portal = "https://entra.microsoft.com/#view/Microsoft_AAD_ERM/DashboardBlade/~/azureADRoles"
+CISM365Section = "5.3.1"
+CISM365Level = "L2"
+CISM365version = "6.0"
+
+[UserLinkedInConnection]
+score = 7
+short = "User can connect their accounts to LinkedIn"
+risk = "Allowing users to sync their account with LinkedIn could disclose useful information for an attacker."
+link = "https://learn.microsoft.com/en-us/azure/active-directory/enterprise-users/linkedin-integration"
+solution = "Go to the Portal Url and set the value under *LinkedIn account connections* to *No*."
+scope = "AAD"
+maturity = 1
+portal = "https://entra.microsoft.com/#view/Microsoft_AAD_UsersAndTenants/UserManagementMenuBlade/~/UserSettings/menuId/UserSettings"
+CISM365Section = "5.1.2.6"
+CISM365Level = "L2"
+CISM365version = "6.0"
+
+[UserMax4GlobalAdmins]
+score = 10
+short = "Your organization has more than four or less then two global admins"
+risk = "Too fewer admins increases the risk, that you lose the control over your tenant. Too many admins increases the risk that your tenant is compromised."
+solution = "Try to have only between two and four global admins. The most of the tasks can be performed using other roles."
+scope = "AAD"
+maturity = 1
+portal = "https://portal.azure.com/#blade/Microsoft_AAD_IAM/ActiveDirectoryMenuBlade/RolesAndAdministrators"
+CISM365Section = "1.1.3"
+CISM365Level = "L1"
+CISM365version = "6.0"
+
+[UserMFAFatigueProtection]
+score = 7
+short = "Users protection against MFA fatigue could be improved"
+risk = "Users tend to approve MFA request, in case they receive to many or it is not obvious that the requests are fake."
+link = "https://techcommunity.microsoft.com/t5/microsoft-entra-azure-ad-blog/defend-your-users-from-mfa-fatigue-attacks/ba-p/2365677"
+solution = "Go to the reference link. Then click on *Microsoft Authenticator* an go to *Configure*. Here ensure that *Show application name in push and passwordless notifications* and *Show geographic location in push and passwordless notifications* are enabled."
+scope = "AAD"
+maturity = 1
+portal = "https://entra.microsoft.com/#view/Microsoft_AAD_IAM/AuthenticationMethodsMenuBlade/~/AdminAuthMethods"
+CISM365Section = "5.2.3.1"
+CISM365Level = "L1"
+CISM365version = "6.0"
+
+[UserNotifyAdminOnPasswordReset]
+score = 1
+short = "Admins are not notified when their password is changed"
+risk = "A malicious password reset might stay unnoticed."
+solution = "Open the link under Portal URL and set *Notify all admins when other admins reset their password?* to Yes"
+scope = "AAD"
+maturity = 1
+portal = "https://entra.microsoft.com/#view/Microsoft_AAD_IAM/PasswordResetMenuBlade/~/Notifications"
+CISAZSection = "2.11"
+CISAZLevel = "L1"
+CISAZVersion = "3.0"
+
+[UserNotifyUserOnPasswordReset]
+score = 1
+short = "User are not notified when their password is changed"
+risk = "A malicious password reset might stay unnoticed."
+solution = "Open the link under Portal URL and set *Notify users on password resets?* to Yes"
+scope = "AAD"
+maturity = 1
+portal = "https://entra.microsoft.com/#view/Microsoft_AAD_IAM/PasswordResetMenuBlade/~/Notifications"
+CISAZSection = "2.10"
+CISAZLevel = "L1"
+CISAZVersion = "3.0"
+
+[UserPasswordBadPasswordList]
+score = 4
+short = "The Tenant is no configured for a bad password list"
+risk = "This increases the risk, users uses easy guessable password."
+solution = """
+1. Go to Entra Admin Center
+2. Go to Protection
+3. Go to Authentication methods
+4. Go to Password protection
+5. Ensure Enforce custom list is set to Yes.
+"""
+scope = "AAD"
+maturity = 1
+portal = "https://entra.microsoft.com/#view/Microsoft_AAD_IAM/AuthenticationMethodsMenuBlade/~/PasswordProtection"
+CISM365Section = "5.2.3.2"
+CISM365Level = "L1"
+CISM365version = "6.0"
+CISAZSection = "2.7"
+CISAZLevel = "L1"
+CISAZVersion = "3.0"
+
+[UserPasswordResetRequires2Methods]
+score = 1
+short = "Password Self-Service does not require two methods for reset"
+risk = "This increases the risk, that a threat actor can perform a password reset for a user."
+solution = """
+1. Go to Entra ID
+2. Go to Protection
+3. Go to Password reset
+4. Go to Authentication methods
+5. Set the Number of methods required to reset to 2.
+"""
+scope = "AAD"
+maturity = 1
+portal = "https://entra.microsoft.com/#view/Microsoft_AAD_IAM/PasswordResetMenuBlade/~/AuthenticationMethods"
+CISAZSection = "2.5"
+CISAZLevel = "L1"
+CISAZVersion = "3.0"
+
+[UserPasswordSelfService]
+score = 1
+short = "Password Self-Service is disabled"
+risk = "No risk at all. But this can help to reduce calls to the Helpdesk."
+link = "https://docs.microsoft.com/en-us/azure/active-directory/authentication/tutorial-enable-sspr"
+long = "Allowing to use a secure password reset mechanism reduces the number of calls in your self-service."
+solution = "Use the link in the reference below."
+scope = "AAD"
+maturity = 1
+portal = "https://portal.azure.com/#blade/Microsoft_AAD_IAM/PasswordResetMenuBlade/Properties"
+CISM365Section = "5.2.4.1"
+CISM365Level = "L1"
+CISM365version = "6.0"
+
+[UserPerUserMFA]
+score = 3
+short = "Some user have 'Per-user MFA' enabled"
+risk = "Per-User MFA can cause some undesirable user authentication states in combination with Conditional Access or other security settings."
+solution = """
+1.	Go to Microsoft Entra admin center https://entra.microsoft.com/.
+2.	Click on Identity > Users select All users.
+3.	Click on Per-user MFA on the top row.
+4.	Click the empty box next to Display Name to select all accounts.
+5.	On the far right under quick steps click Disable.
+"""
+scope = "AAD"
+maturity = 0
+CISM365Section = "5.1.2.1"
+CISM365Level = "L1"
+CISM365version = "6.0"
+
+[UserReconfirmAuthenticationInformation]
+score = 1
+short = "User must never reconfirm authentication information"
+risk = "User must never update their authentication information. This increases the risk, that stolen information are valid forever."
+solution = "Go to *Entra Portal -> Protection -> Password reset -> Registration* and set the value for *Number of days before users are asked to re-confirm their authentication information* to a value that fits for you."
+scope = "AAD"
+maturity = 1
+portal = "https://entra.microsoft.com/#view/Microsoft_AAD_IAM/PasswordResetMenuBlade/~/Registration"
+CISAZSection = "2.9"
+CISAZLevel = "L1"
+CISAZVersion = "3.0"
+
+[UserRemainSignIn]
+score = 4
+short = "User sees the 'Remains Sign-In' Button"
+risk = "Allowing a user to use this option, it might happen that they use is on a public computer. So the risk that the user session is compromised increases."
+solution = "Go to the Portal Url and ensure that *Show keep user signed in* is set to *No*."
+scope = "AAD"
+maturity = 1
+portal = "https://entra.microsoft.com/#view/Microsoft_AAD_UsersAndTenants/UserManagementMenuBlade/~/UserSettings/menuId/UserSettings"
+CISM365Section = "5.1.2.5"
+CISM365Level = "L2"
+CISM365version = "6.0"
+
+[UserRequireMFADevJoin]
+score = 0
+short = "Users do not require MFA to join devices"
+risk = "Joining a device is often used by threat actors to persist its access."
+solution = """
+1. Go to *Azure Active Directory*
+2. Go to *Devices*
+3. Go to *Device settings*
+4. Set *Require Multi-Factor Authentication to register or join devices with Azure AD* to *Yes*
+"""
+scope = "AAD"
+maturity = 1
+portal = "https://portal.azure.com/#view/Microsoft_AAD_Devices/DevicesMenuBlade/~/DeviceSettings/menuId~/null"
+CISAZSection = "2.22"
+CISAZLevel = "L1"
+CISAZVersion = "3.0"
+
+[UserRestrictAccessToAdminPortal]
+score = 1
+short = "User can access the Entra admin portal"
+risk = "The Entra admin portal may contain sensitive information."
+long = "Entra Admin portal contains sensitive information, which not everyone should be able to see."
+solution = """
+1. Go to Entra admin center
+2. Go to Users
+3. Go to User settings
+4. Set Restrict access to Azure AD administration portal to *Yes*.
+"""
+scope = "AAD"
+maturity = 1
+portal = "https://entra.microsoft.com/#view/Microsoft_AAD_UsersAndTenants/UserManagementMenuBlade/~/UserSettings/menuId/UserSettings"
+CISM365Section = "5.1.2.4"
+CISM365Level = "L1"
+CISM365version = "6.0"
+CISAZSection = "2.17"
+CISAZLevel = "L1"
+CISAZVersion = "3.0"
+
+[UserWeakAuthenticationEnabled]
+score = 3
+short = "Some weak authentication mechanisms are enabled"
+risk = "Weak authentication mechanism increases the risk that a user is successfully compromised by a threat actor."
+solution = "To disable weak authentication mechanism go to [https://entra.microsoft.com/#view/Microsoft_AAD_IAM/AuthenticationMethodsMenuBlade/~/AdminAuthMethods/fromNav/Identity](https://entra.microsoft.com/#view/Microsoft_AAD_IAM/AuthenticationMethodsMenuBlade/~/AdminAuthMethods/fromNav/Identity) and disable *SMS*, *Email OTP* and *Voice call*."
+scope = "AAD"
+maturity = 1
+portal = "https://entra.microsoft.com/#view/Microsoft_AAD_IAM/AuthenticationMethodsMenuBlade/~/AdminAuthMethods/fromNav/Identity"
+CISM365Section = "5.2.3.5"
+CISM365Level = "L1"
+CISM365version = "6.0"
+
+[UserWithoutCAPolicy]
+score = 8
+short = "User without Conditional Access Policy"
+risk = "User without Conditional Access Policies assigned are not properly protected against identity related attacks."
+solution = """Set up proper Conditional Access Policies and assigne them to users."""
+scope = "AAD"
+maturity = 1
+portal = "https://portal.azure.com/#view/Microsoft_AAD_ConditionalAccess/ConditionalAccessBlade/~/Policies"
